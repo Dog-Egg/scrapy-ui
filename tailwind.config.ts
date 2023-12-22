@@ -13,6 +13,7 @@ const config: Config = {
       tertiary: "#EEF1F4",
       white: "#FFFFFF",
       danger: "#F62C2C",
+      annotations: "#F6BE2C",
     },
   },
   plugins: [],

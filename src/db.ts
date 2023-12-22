@@ -1,4 +1,4 @@
-const nodes: APIData.Node[] = [];
+const nodes: APIData.Node[] = [{ address: "127.0.0.1:6800" }];
 
 /**
  * 添加 Node。

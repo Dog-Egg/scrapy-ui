@@ -19,7 +19,11 @@ function AddNode() {
     <div className="relative flex h-full w-full justify-center">
       <Form className="absolute top-1/3 mx-auto w-1/3">
         <Form.Item label="Address" errorMsg={addressErrMsg}>
-          <Input placeholder="127.0.0.1:6800" onChange={setAddress} />
+          <Input
+            placeholder="127.0.0.1:6800"
+            onChange={setAddress}
+            defaultValue="127.0.0.1:6800"
+          />
         </Form.Item>
         <div className="mt-[2.75rem]">
           <Button
@@ -29,13 +33,13 @@ function AddNode() {
                 method: "post",
                 body: JSON.stringify(bodyData),
               }).then((resp) => {
-                resp.json().then((data) => {
-                  if (data.status === "ok") {
-                    router.back();
-                  } else if (data.status === "error") {
+                if (resp.ok) {
+                  router.back();
+                } else {
+                  resp.json().then((data) => {
                     setAddressErrMsg(data.fieldErrors?.address);
-                  }
-                });
+                  });
+                }
               });
             }}
           >
