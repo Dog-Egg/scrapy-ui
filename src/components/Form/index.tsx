@@ -21,15 +21,21 @@ function Form({ children, className }: FormProps) {
 
 interface FormItemProps extends PropsWithChildren {
   label?: string;
+  errorMsg?: string;
 }
 
-function FormItem({ children, label }: FormItemProps) {
+function FormItem({ children, label, errorMsg }: FormItemProps) {
   return (
-    <div className="mb-6">
+    <div className="relative mb-6">
       {label && (
         <label className="mb-2 block text-sm font-normal">{label}</label>
       )}
       {children}
+      {errorMsg && (
+        <span className="text-danger absolute -bottom-5 left-0 text-xs">
+          {errorMsg}
+        </span>
+      )}
     </div>
   );
 }

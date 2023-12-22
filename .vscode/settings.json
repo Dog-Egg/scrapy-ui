@@ -3,5 +3,16 @@
     "editor.formatOnSave": true,
     "[typescriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
-    }
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "sqlfluff.dialect": "sqlite",
+    "sqlfluff.format.arguments": [
+        "--FIX-EVEN-UNPARSABLE"
+    ],
+    "sqlfluff.format.enabled": true,
+    "[sql]": {
+        "editor.defaultFormatter": "dorzey.vscode-sqlfluff"
+    },
 }
