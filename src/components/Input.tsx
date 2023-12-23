@@ -1,3 +1,6 @@
+import { useContext, useEffect, useState } from "react";
+import { FormItemContext } from "./Form";
+
 interface Props {
   placeholder?: string;
   onChange?: (value: string) => void;
@@ -5,6 +8,15 @@ interface Props {
 }
 
 function Input(props: Props) {
+  const { defaultValue } = props;
+
+  const formItem = useContext(FormItemContext);
+  const [internalValue, setInteralValue] = useState(defaultValue);
+
+  useEffect(() => {
+    formItem?.setValue(internalValue);
+  }, [internalValue, formItem]);
+
   return (
     <input
       className="block w-full rounded-md border border-primary px-3 py-3 outline-none placeholder:text-tertiary group-[.is-error]:border-danger"
@@ -12,6 +24,7 @@ function Input(props: Props) {
       placeholder={props.placeholder}
       onChange={(e) => {
         const value = e.target.value;
+        setInteralValue(value);
         props.onChange && props.onChange(value);
       }}
       defaultValue={props.defaultValue}
