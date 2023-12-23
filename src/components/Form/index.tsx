@@ -39,12 +39,19 @@ interface FormItemProps extends PropsWithChildren {
   label?: string;
   errorMsg?: string;
   validators: Array<(value: any) => void>;
+  onClearErrorMsg?: () => void;
 }
 
 export const FormItemContext = createContext<FormItemObject | null>(null);
 
 function FormItem(props: FormItemProps) {
-  const { children, label, errorMsg: exteralErrMsg, validators } = props;
+  const {
+    children,
+    label,
+    errorMsg: exteralErrMsg,
+    validators,
+    onClearErrorMsg,
+  } = props;
   const id = useId();
 
   const [formItem] = useState(() => {
@@ -64,6 +71,11 @@ function FormItem(props: FormItemProps) {
         };
       }),
     );
+    obj.onValueChange(() => {
+      // 字段输入改变后清除错误消息。
+      setInteralErrMsg(""); // 清除内部错误信息
+      onClearErrorMsg && onClearErrorMsg(); // 通知清楚外部传入的错误信息
+    });
     return obj;
   });
 
@@ -158,6 +170,9 @@ class FormItemObject {
 
   setValue(value: any) {
     this.value = value;
+    this.valueChangeFunctions.forEach((fn) => {
+      fn();
+    });
   }
   getValue() {
     return this.value;
@@ -167,5 +182,10 @@ class FormItemObject {
     this.validators.forEach((fn) => {
       fn(this.value);
     });
+  }
+
+  private valueChangeFunctions: Function[] = [];
+  onValueChange(callback: Function) {
+    this.valueChangeFunctions.push(callback);
   }
 }
