@@ -1,5 +1,3 @@
-"use client";
-
 import { PropsWithChildren, ReactNode } from "react";
 import classNames from "classnames";
 
