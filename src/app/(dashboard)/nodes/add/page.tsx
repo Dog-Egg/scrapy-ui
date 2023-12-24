@@ -16,11 +16,7 @@ function required(msg: string) {
 
 function AddNode() {
   const router = useRouter();
-  const [address, setAddress] = useState("");
   const [addressErrMsg, setAddressErrMsg] = useState("");
-  useEffect(() => {
-    setAddressErrMsg("");
-  }, [address]);
 
   const [isSaveLoading, setIsSaveLoading] = useState(false);
 
@@ -54,9 +50,10 @@ function AddNode() {
           prop="address"
           label="Address"
           errorMsg={addressErrMsg}
+          onClearErrorMsg={() => setAddressErrMsg("")}
           validators={[required("Address is required.")]}
         >
-          <Input placeholder="127.0.0.1:6800" onChange={setAddress} />
+          <Input placeholder="127.0.0.1:6800" />
         </Form.Item>
         <div className="mt-[2.75rem]">
           <Button block disabled={isSaveLoading}>
