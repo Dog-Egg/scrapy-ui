@@ -1,5 +1,12 @@
 declare namespace ScrayUI {
   interface Node {
-    address: string;
+    url: string;
+  }
+
+  interface ScrapydDaemonstatusResponse {
+    running: number;
+    pending: number;
+    finished: number;
+    node_name: string;
   }
 }

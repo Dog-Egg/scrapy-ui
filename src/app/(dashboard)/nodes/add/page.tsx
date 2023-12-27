@@ -47,13 +47,13 @@ function AddNode() {
         }}
       >
         <Form.Item
-          prop="address"
-          label="Address"
+          prop="url"
+          label="Scrapyd URL"
           errorMsg={addressErrMsg}
           onClearErrorMsg={() => setAddressErrMsg("")}
-          validators={[required("Address is required.")]}
+          validators={[required("Scrapyd URL is required.")]}
         >
-          <Input placeholder="127.0.0.1:6800" />
+          <Input type="url" placeholder="http://127.0.0.1:6800" />
         </Form.Item>
         <div className="mt-[2.75rem]">
           <Button block disabled={isSaveLoading}>

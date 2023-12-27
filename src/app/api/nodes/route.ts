@@ -1,17 +1,17 @@
 "use server";
 
-import { addNode, getNodeByAddress } from "@/db";
+import { addNode, getNodeByURL } from "@/db";
 
 export async function POST(request: Request) {
   const data: ScrayUI.Node = await request.json();
-  if (getNodeByAddress(data.address)) {
+  if (await getNodeByURL(data.url)) {
     return Response.json(
       {
-        fieldErrors: { address: "Address already exists." },
+        fieldErrors: { address: "URL already exists." },
       },
       { status: 400 },
     );
   }
-  addNode(data);
+  await addNode(data);
   return new Response();
 }
