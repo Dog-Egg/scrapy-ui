@@ -20,7 +20,7 @@ function Input(props: Props) {
 
   return (
     <input
-      className="block w-full rounded-md border border-primary px-3 py-3 outline-none placeholder:text-tertiary group-[.is-error]:border-danger"
+      className="block w-full rounded-md border border-primary px-3 py-3 outline-none placeholder:text-secondary group-[.is-error]:border-danger"
       type={props.type}
       placeholder={props.placeholder}
       onChange={(e) => {

@@ -10,7 +10,7 @@ import {
 
 interface FormProps extends PropsWithChildren {
   className?: string;
-  onSubmit?: (data: object) => void;
+  onSubmit?: (data: any) => void;
 }
 
 const FormContext = createContext<FormObject | null>(null);

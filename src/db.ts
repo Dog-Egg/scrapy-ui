@@ -9,17 +9,14 @@ const nodes: ScrayUI.Node[] = [
  * 添加 Node。
  */
 export async function addNode(data: ScrayUI.Node) {
-  if (!data.url.endsWith("/")) {
-    data.url = data.url.concat("/");
-  }
-  nodes.push(data);
+  nodes.push({ ...data, url: format_url(data.url) });
 }
 
 /**
  * 通过 url 获取 Node。
  */
-export async function getNodeByURL(address: string) {
-  return nodes.find((e) => e.url == address);
+export async function getNodeByURL(url: string) {
+  return nodes.find((i) => i.url == format_url(url));
 }
 
 /**
@@ -27,4 +24,14 @@ export async function getNodeByURL(address: string) {
  */
 export async function getAllNodes() {
   return nodes;
+}
+
+/**
+ * 节点 URL 必须以 '/' 结尾。
+ */
+function format_url(url: string) {
+  if (!url.endsWith("/")) {
+    url = url.concat("/");
+  }
+  return url;
 }
