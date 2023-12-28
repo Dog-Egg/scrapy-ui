@@ -1,6 +1,9 @@
 "use server";
 
-const nodes: ScrayUI.Node[] = [{ url: "http://127.0.0.1:6800/" }];
+const nodes: ScrayUI.Node[] = [
+  { url: "http://127.0.0.1:6800/" },
+  { url: "http://127.0.0.1:6801/" },
+];
 
 /**
  * 添加 Node。
@@ -23,6 +26,5 @@ export async function getNodeByURL(address: string) {
  * 获取所有节点
  */
 export async function getAllNodes() {
-  console.log(nodes);
   return nodes;
 }

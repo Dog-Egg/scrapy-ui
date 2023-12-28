@@ -1,4 +1,4 @@
-export async function request<T>({
+export async function request({
   url,
   method = "get",
   data,
