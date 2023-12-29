@@ -16,7 +16,7 @@ export default function Menu({ title, children, footer }: Props) {
       <div>{children}</div>
       {footer && (
         <div className="mt-auto">
-          <div className="bg-tertiary my-4 h-[1px]"></div>
+          <div className="my-4 h-[1px] bg-tertiary"></div>
           {footer}
         </div>
       )}

@@ -35,3 +35,7 @@ function format_url(url: string) {
   }
   return url;
 }
+
+export async function getEnabledNodes() {
+  return nodes;
+}

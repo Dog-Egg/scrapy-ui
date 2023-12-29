@@ -3,7 +3,7 @@ export async function request({
   method = "get",
   data,
 }: {
-  url: string;
+  url: string | URL;
   method?: "get" | "post";
   data?: any;
 }) {

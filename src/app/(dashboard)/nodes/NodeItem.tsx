@@ -3,6 +3,7 @@
 import Loading from "@/components/Loading";
 import { request } from "@/utils/request";
 import { useEffect, useMemo, useState } from "react";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 function NodeItem({ nodeURL }: { nodeURL: string }) {
   const [loading, setLoading] = useState(true);
@@ -40,10 +41,13 @@ function NodeItem({ nodeURL }: { nodeURL: string }) {
   }, [data]);
 
   return (
-    <div className="mx-auto mt-8 w-2/3 rounded-xl border border-[transparent] bg-tertiary p-4 hover:border-secondary">
-      <div className="text-base text-secondary">
+    <div className="group mx-auto mt-8 w-1/2 rounded-xl border border-[transparent] bg-tertiary p-4 hover:border-secondary">
+      <div className="flex justify-between text-base text-secondary">
         <span>{useMemo(() => new URL(nodeURL).host, [nodeURL])}</span>
         {/* {data && <span className="ml-1">{`(${data.node_name})`}</span>} */}
+        <span className="hidden cursor-pointer rounded-full text-2xl hover:text-primary group-hover:block">
+          <EllipsisHorizontalIcon width={"1em"} />
+        </span>
       </div>
 
       {/* 分隔线 */}
@@ -67,7 +71,7 @@ function NodeItem({ nodeURL }: { nodeURL: string }) {
         {(loading || errorMessage) && (
           <div className=" absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-tertiary">
             {loading && (
-              <span className=" text-2xl">
+              <span className="text-2xl text-secondary">
                 <Loading />
               </span>
             )}

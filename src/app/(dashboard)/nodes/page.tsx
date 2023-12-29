@@ -9,7 +9,8 @@ export default async function NodesPage() {
 
   return (
     <div>
-      <header className=" flex justify-between border-b border-tertiary py-6">
+      <header className=" flex items-center justify-between border-b border-secondary py-6">
+        <h2 className=" text-4xl font-semibold">Nodes</h2>
         <div className="ml-auto">
           <Link href={"/nodes/add"}>
             <Button className="min-w-56" icon={<PlusCircleIcon />}>

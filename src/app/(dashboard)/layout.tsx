@@ -1,6 +1,11 @@
 import Menu from "@/components/Menu";
 import MenuItem from "@/components/MenuItem";
-import { ServerStackIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import {
+  ServerStackIcon,
+  Cog6ToothIcon,
+  ListBulletIcon,
+  BugAntIcon,
+} from "@heroicons/react/24/outline";
 
 export default function DashBoardLayout({
   children,
@@ -23,9 +28,11 @@ export default function DashBoardLayout({
           }
         >
           <MenuItem label="Nodes" icon={<ServerStackIcon />} to="/nodes" />
+          <MenuItem label="Jobs" icon={<ListBulletIcon />} to="/jobs" />
+          <MenuItem label="Spiders" icon={<BugAntIcon />} to="/spiders" />
         </Menu>
       </aside>
-      <div className="flex-grow px-4">{children}</div>
+      <div className="flex-grow px-8">{children}</div>
     </main>
   );
 }
