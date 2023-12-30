@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import SelectionPanel from "./SelectionPanel";
 import { listprojects, listspiders } from "@/actions";
+import { TrashIcon, PlayIcon } from "@heroicons/react/24/outline";
 
 export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   const [selectedNodeURL, setSelectedNodeURL] = useState<string>();
@@ -57,12 +58,32 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
         onSelect={(option) => {
           setSelectedProject(option);
         }}
+        moreActions={[
+          {
+            label: (
+              <div className="flex items-center">
+                <TrashIcon width={"1.25em"} className="mr-2" />
+                Delete this project
+              </div>
+            ),
+          },
+        ]}
       />
       <SelectionPanel
         title="Spiders"
         selectable={false}
         options={spiders}
         emptyText="Please select a project first."
+        moreActions={[
+          {
+            label: (
+              <div className="flex items-center">
+                <PlayIcon width={"1.25em"} className="mr-2" />
+                Schedule this spider
+              </div>
+            ),
+          },
+        ]}
       />
     </div>
   );

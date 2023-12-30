@@ -1,9 +1,10 @@
 "use client";
 
-import { ChevronRightIcon } from "@heroicons/react/24/solid";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
+import Dropdown, { MenuProps } from "@/components/Dropdown";
 
 interface Props {
   title: string;
@@ -11,6 +12,7 @@ interface Props {
   onSelect?: (option: string | undefined) => void;
   emptyText?: string;
   selectable?: boolean;
+  moreActions?: MenuProps;
 }
 export default function SelectionPanel(props: Props) {
   const { onSelect, options, selectable = true } = props;
@@ -49,8 +51,13 @@ export default function SelectionPanel(props: Props) {
             >
               <span>{option}</span>
 
-              {selectable && (
-                <ChevronRightIcon className="h-4 w-4 text-secondary" />
+              {props.moreActions && (
+                <Dropdown menu={props.moreActions}>
+                  <EllipsisVerticalIcon
+                    className="cursor-pointer hover:text-primary"
+                    width={"1.25em"}
+                  />
+                </Dropdown>
               )}
             </div>
           ))
