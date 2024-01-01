@@ -165,9 +165,9 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
 function Arrow({ children }: PropsWithChildren) {
   return (
     <div className="relative my-auto">
-      <div className="border-annotations w-full border-b-[1.5px] border-dashed"></div>
+      <div className="border-annotations w-full border-b-[1.5px]"></div>
       <ChevronRightIcon
-        className="text-annotations absolute right-0 top-0 -translate-y-[47%] translate-x-1/2"
+        className="text-annotations absolute right-0 top-0 -translate-y-[46%] translate-x-[39%]"
         width={"1.25em"}
         height={"1.25em"}
       />
