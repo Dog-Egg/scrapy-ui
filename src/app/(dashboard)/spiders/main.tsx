@@ -8,7 +8,6 @@ import {
   ChevronRightIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import classNames from "classnames";
 
 export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   // nodes
@@ -94,12 +93,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
 
   const nodeOptions = useMemo(() => nodes.map((n) => n.url), [nodes]);
   return (
-    <div
-      className={classNames(
-        "grid gap-3",
-        showVersionPanel ? "grid-cols-7" : "grid-cols-5",
-      )}
-    >
+    <div className="flex h-96 px-10 *:mr-3 *:w-0 *:shrink *:basis-0 last:*:mr-0 odd:*:grow-[4] even:*:grow-[3]">
       <SelectionPanel
         title="Nodes"
         options={nodeOptions}

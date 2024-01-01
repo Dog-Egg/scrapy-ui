@@ -13,7 +13,7 @@ export default function DashBoardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex h-screen">
+    <div className="flex h-screen">
       <aside className="h-full border-r border-r-secondary">
         <Menu
           title="ScrapyUI"
@@ -32,7 +32,7 @@ export default function DashBoardLayout({
           <MenuItem label="Spiders" icon={<BugAntIcon />} to="/spiders" />
         </Menu>
       </aside>
-      <div className="flex-grow px-8">{children}</div>
-    </main>
+      <main className="flex-grow px-8">{children}</main>
+    </div>
   );
 }

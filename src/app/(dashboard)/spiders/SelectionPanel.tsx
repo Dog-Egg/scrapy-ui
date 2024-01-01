@@ -27,7 +27,7 @@ export default function SelectionPanel(props: Props) {
     <div className="rounded-xl border border-secondary p-4">
       <h5 className="text-xl">{props.title}</h5>
       <div className="my-4 border-b border-dashed border-b-secondary"></div>
-      <div>
+      <>
         {isEmpty(props.options) ? (
           <div className=" text-secondary">{props.emptyText}</div>
         ) : (
@@ -60,7 +60,7 @@ export default function SelectionPanel(props: Props) {
             </div>
           ))
         )}
-      </div>
+      </>
     </div>
   );
 }
