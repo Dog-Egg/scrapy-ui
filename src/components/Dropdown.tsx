@@ -32,7 +32,7 @@ export default function Dropdown(props: Props) {
     dismiss,
   ]);
 
-  const referenceProps = getReferenceProps();
+  const referenceProps: any = getReferenceProps();
 
   return (
     <>
@@ -41,8 +41,7 @@ export default function Dropdown(props: Props) {
         {...referenceProps}
         onClick={(e) => {
           e.stopPropagation();
-          // @ts-ignore
-          referenceProps.onClick(e);
+          referenceProps.onClick?.(e);
         }}
       >
         {props.children}

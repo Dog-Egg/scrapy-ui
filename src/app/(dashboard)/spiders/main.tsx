@@ -1,63 +1,116 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useMemo, useState } from "react";
 import SelectionPanel from "./SelectionPanel";
-import { listprojects, listspiders } from "@/actions";
-import { TrashIcon, PlayIcon } from "@heroicons/react/24/outline";
+import { listprojects, listspiders, listversions } from "@/actions";
+import {
+  TrashIcon,
+  PlayIcon,
+  ChevronRightIcon,
+  ChevronDownIcon,
+} from "@heroicons/react/24/outline";
+import classNames from "classnames";
 
 export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
+  // nodes
   const [selectedNodeURL, setSelectedNodeURL] = useState<string>();
-  const [projects, setProjects] = useState<string[]>();
-
+  // projects
+  const [projects, _setProjects] = useState<string[]>();
   const [projectPanelMsg, setProjectPanelMsg] = useState(
     "Please select a node first.",
   );
-  useEffect(() => {
-    // 选择的节点更新时，获取节点中的项目列表
-    if (!selectedNodeURL) return;
-    (async () => {
-      try {
-        setProjects(await listprojects(selectedNodeURL));
-      } catch (e) {
-        // 从节点获取项目列表失败，清空项目列表
-        setProjects([]);
-
-        if (e instanceof Error) {
-          setProjectPanelMsg(e.message);
-        }
-      }
-    })();
-  }, [selectedNodeURL]);
-
   const [selectedProject, setSelectedProject] = useState<string>();
+  // spiders
   const [spiders, setSpiders] = useState<string[]>();
-  useEffect(() => {
-    if (!selectedNodeURL || !selectedProject) return;
-    (async () => {
-      try {
-        setSpiders(await listspiders(selectedNodeURL, selectedProject));
-      } catch {
-        setSpiders([]);
+  const [spiderPanelMsg, setSpiderPanelMsg] = useState(
+    "Please select a project first.",
+  );
+  // versions
+  const [showVersionPanel, setShowVersionPanel] = useState(false);
+  const [versions, setVersions] = useState<string[]>();
+
+  async function handleSelectNodeURL(url: string) {
+    setSelectedNodeURL(url);
+
+    setProjects([]);
+    setSelectedProject(undefined);
+
+    setProjectPanelMsg("Loading...");
+    try {
+      setProjects(await listprojects(url));
+      setProjectPanelMsg("Project loading completed");
+    } catch (e) {
+      if (e instanceof Error) {
+        setProjectPanelMsg(e.message);
       }
-    })();
-  }, [selectedProject, selectedNodeURL]);
+    }
+  }
+
+  function setProjects(projects: string[]) {
+    _setProjects(projects);
+
+    setShowVersionPanel(false);
+    setVersions([]);
+
+    setSpiders([]);
+    setSpiderPanelMsg("Please select a project first.");
+  }
+
+  async function handleSelectProject(project: string) {
+    setSelectedProject(project);
+
+    setSpiders([]);
+
+    if (selectedNodeURL) {
+      await fetchSpiders(selectedNodeURL, project);
+    }
+  }
+
+  async function handleShowVersionPanel() {
+    setShowVersionPanel(true);
+    if (selectedNodeURL && selectedProject) {
+      const versions = await listversions(selectedNodeURL, selectedProject);
+      setVersions(versions.reverse());
+    }
+  }
+
+  async function handleSelectVersion(version: string) {
+    if (selectedNodeURL && selectedProject) {
+      await fetchSpiders(selectedNodeURL, selectedProject, version);
+    }
+  }
+
+  async function fetchSpiders(url: string, project: string, version?: string) {
+    setSpiders([]);
+    setSpiderPanelMsg("Loading");
+
+    try {
+      setSpiders(await listspiders(url, project, version));
+    } catch (e) {
+      if (e instanceof Error) {
+        setSpiderPanelMsg(e.message);
+      }
+    }
+  }
 
   const nodeOptions = useMemo(() => nodes.map((n) => n.url), [nodes]);
   return (
-    <div className=" grid grid-cols-3 gap-24">
+    <div
+      className={classNames(
+        "grid gap-3",
+        showVersionPanel ? "grid-cols-7" : "grid-cols-5",
+      )}
+    >
       <SelectionPanel
         title="Nodes"
         options={nodeOptions}
-        onSelect={(option) => {
-          setSelectedNodeURL(option);
-        }}
+        onSelect={handleSelectNodeURL}
       />
+      <Arrow></Arrow>
       <SelectionPanel
         title="Projects"
         emptyText={projectPanelMsg}
         options={projects}
-        onSelect={(option) => {
-          setSelectedProject(option);
-        }}
+        onSelect={handleSelectProject}
         moreActions={[
           {
             label: (
@@ -69,11 +122,37 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
           },
         ]}
       />
+
+      {showVersionPanel ? (
+        <>
+          <Arrow></Arrow>
+          <SelectionPanel
+            title="Versions"
+            emptyText="Loading..."
+            options={versions}
+            defaultActive={versions?.[0]}
+            onSelect={handleSelectVersion}
+          />
+          <Arrow></Arrow>
+        </>
+      ) : (
+        <Arrow>
+          {selectedProject && (
+            <div
+              className="flex cursor-pointer items-center rounded-md border border-primary px-2 py-1"
+              onClick={handleShowVersionPanel}
+            >
+              latest
+              <ChevronDownIcon className="ml-1 text-secondary" width={"1em"} />
+            </div>
+          )}
+        </Arrow>
+      )}
       <SelectionPanel
         title="Spiders"
         selectable={false}
         options={spiders}
-        emptyText="Please select a project first."
+        emptyText={spiderPanelMsg}
         moreActions={[
           {
             label: (
@@ -85,6 +164,24 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
           },
         ]}
       />
+    </div>
+  );
+}
+
+function Arrow({ children }: PropsWithChildren) {
+  return (
+    <div className="relative my-auto">
+      <div className="border-annotations w-full border-b-[1.5px] border-dashed"></div>
+      <ChevronRightIcon
+        className="text-annotations absolute right-0 top-0 -translate-y-[47%] translate-x-1/2"
+        width={"1.25em"}
+        height={"1.25em"}
+      />
+      {children && (
+        <div className=" absolute left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-white p-1 text-primary">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

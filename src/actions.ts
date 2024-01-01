@@ -22,7 +22,7 @@ export async function listversions(baseURL: string, project: string) {
     url: new URL(`listversions.json?project=${project}`, baseURL),
   });
   const data = await response.json();
-  return data.version as string[];
+  return data.versions as string[];
 }
 
 export async function listspiders(
@@ -31,7 +31,9 @@ export async function listspiders(
   version?: string,
 ) {
   const url = new URL(`listspiders.json?project=${project}`, baseURL);
-  if (version) url.searchParams.set("version", version);
+  if (version) {
+    url.searchParams.set("_version", version);
+  }
   const response = await request({ url });
   const data = await response.json();
   return data.spiders as string[];

@@ -9,23 +9,19 @@ import Dropdown, { MenuProps } from "@/components/Dropdown";
 interface Props {
   title: string;
   options?: string[];
-  onSelect?: (option: string | undefined) => void;
+  onSelect?: (option: string) => void;
   emptyText?: string;
   selectable?: boolean;
   moreActions?: MenuProps;
+  defaultActive?: string;
 }
 export default function SelectionPanel(props: Props) {
-  const { onSelect, options, selectable = true } = props;
+  const { options, selectable = true } = props;
   const [selected, setSelected] = useState<string>();
 
   useEffect(() => {
-    // 当选择项列表更新时，清除以选择项
-    if (selected) {
-      setSelected(undefined);
-      onSelect?.(undefined);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options]);
+    setSelected(props.defaultActive);
+  }, [options, props.defaultActive]);
 
   return (
     <div className="rounded-xl border border-secondary p-4">
@@ -46,10 +42,12 @@ export default function SelectionPanel(props: Props) {
               onClick={() => {
                 if (!selectable) return;
                 setSelected(option);
-                onSelect?.(option);
+                props.onSelect?.(option);
               }}
             >
-              <span>{option}</span>
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {option}
+              </span>
 
               {props.moreActions && (
                 <Dropdown menu={props.moreActions}>
