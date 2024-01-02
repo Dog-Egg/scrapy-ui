@@ -51,6 +51,9 @@ export default function Dropdown(props: Props) {
           ref={refs.setFloating}
           style={floatingStyles}
           {...getFloatingProps()}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
         >
           <div className="cursor-auto rounded border border-secondary bg-white p-1 text-primary">
             {props.menu.map((item, index) => (
