@@ -6,11 +6,3 @@
   @apply text-primary;
   @apply lg:text-sm;
 }
-
-.button {
-  @apply cursor-pointer rounded-md px-4 py-3 text-base;
-}
-
-.button-primary {
-  @apply bg-primary text-white;
-}

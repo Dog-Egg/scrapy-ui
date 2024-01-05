@@ -8,6 +8,7 @@ import {
   ChevronRightIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
+import Modal from "@/components/Modal";
 
 export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   // nodes
@@ -108,7 +109,18 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
         moreActions={[
           {
             label: (
-              <div className="flex items-center">
+              <div
+                className="flex items-center"
+                onClick={() =>
+                  Modal.confirm({ message: "My Modal" })
+                    .then(() => {
+                      alert("confirm");
+                    })
+                    .catch(() => {
+                      alert("cancel");
+                    })
+                }
+              >
                 <TrashIcon width={"1.25em"} className="mr-2" />
                 Delete this project
               </div>

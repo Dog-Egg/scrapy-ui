@@ -11,8 +11,8 @@ export default async function NodesPage() {
   return (
     <div>
       <Header title="Nodes">
-        <Link href={"/nodes/add"}>
-          <Button className="min-w-56" icon={<PlusCircleIcon />}>
+        <Link href={"/nodes/add"} className="block min-w-56">
+          <Button block icon={<PlusCircleIcon />}>
             Add Node
           </Button>
         </Link>
