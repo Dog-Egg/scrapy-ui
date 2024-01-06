@@ -1,25 +1,13 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren } from "react";
+import MenuItem from "./MenuItem";
 
-interface Props extends PropsWithChildren {
-  title?: string;
-  footer?: ReactNode;
+/**
+ * 需要用于 Server Component
+ */
+function Menu({ children }: PropsWithChildren) {
+  return <div>{children}</div>;
 }
 
-export default function Menu({ title, children, footer }: Props) {
-  return (
-    <div className="flex h-full min-w-72 flex-col p-4">
-      {title && (
-        <h1 className=" pb-6 pt-2 text-center text-4xl font-semibold">
-          {title}
-        </h1>
-      )}
-      <div>{children}</div>
-      {footer && (
-        <div className="mt-auto">
-          <div className="my-4 h-[1px] bg-tertiary"></div>
-          {footer}
-        </div>
-      )}
-    </div>
-  );
-}
+Menu.Item = MenuItem;
+
+export default Menu;

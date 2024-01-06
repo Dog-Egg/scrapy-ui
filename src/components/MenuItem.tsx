@@ -2,34 +2,48 @@
 
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { ReactNode } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import classNames from "classnames";
 
 interface Props {
-  label: string;
+  label: ReactNode;
   icon?: ReactNode;
-  to: string;
+  suffixIcon?: ReactNode;
+  active?: boolean;
+  link?: string;
+  onClick?: () => void;
 }
 
-export default function MenuItem(props: Props) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const active = pathname == props.to;
-
+export default function MenuItem({
+  active = false,
+  suffixIcon,
+  ...props
+}: Props) {
   return (
-    <div
+    <ItemTag
+      link={props.link}
       className="relative flex cursor-pointer items-center justify-between py-4 pl-4 pr-2"
       onClick={() => {
-        router.push(props.to);
+        props.onClick?.();
       }}
     >
       <div className="flex items-center">
         {props.icon && <span className="mr-6 h-5 w-5">{props.icon}</span>}
-        <span>{props.label}</span>
+        <span className={classNames(active && "font-semibold")}>
+          {props.label}
+        </span>
       </div>
-      <ChevronRightIcon className="text-secondary h-4 w-4" />
+
+      <span className="min-h-4 min-w-4 text-secondary">
+        {suffixIcon || <ChevronRightIcon />}
+      </span>
+
       {active && (
-        <div className="bg-tertiary absolute left-0 top-0 -z-10 h-full w-full rounded-lg"></div>
+        <div className="absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-tertiary"></div>
       )}
-    </div>
+    </ItemTag>
   );
+}
+
+function ItemTag({ link, ...props }: { link?: string } & any) {
+  return link ? <a href={link} {...props}></a> : <div {...props}></div>;
 }

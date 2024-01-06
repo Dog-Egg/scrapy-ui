@@ -1,35 +1,39 @@
 import Menu from "@/components/Menu";
-import MenuItem from "@/components/MenuItem";
 import {
   ServerStackIcon,
-  Cog6ToothIcon,
   ListBulletIcon,
   BugAntIcon,
 } from "@heroicons/react/24/outline";
+import { headers } from "next/headers";
+
+const menuItems = [
+  { label: "Nodes", link: "/nodes", icon: <ServerStackIcon /> },
+  { label: "Jobs", link: "/jobs", icon: <ListBulletIcon /> },
+  { label: "Spider", link: "/spiders", icon: <BugAntIcon /> },
+];
 
 export default function DashBoardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = headers();
+  const pathname = headersList.get("x-pathname");
+
   return (
     <div className="flex h-screen">
-      <aside className="h-full border-r border-r-secondary">
-        <Menu
-          title="ScrapyUI"
-          footer={
-            <>
-              <MenuItem
-                label="Settings"
-                icon={<Cog6ToothIcon />}
-                to="/settings"
-              />
-            </>
-          }
-        >
-          <MenuItem label="Nodes" icon={<ServerStackIcon />} to="/nodes" />
-          <MenuItem label="Jobs" icon={<ListBulletIcon />} to="/jobs" />
-          <MenuItem label="Spiders" icon={<BugAntIcon />} to="/spiders" />
+      <aside className="flex h-full min-w-72 flex-col border-r border-r-secondary p-4 pt-0 *:grow first:*:grow-0">
+        <h1 className="py-6 text-center text-4xl font-semibold">ScrapyUI</h1>
+        <Menu>
+          {menuItems.map((item, index) => (
+            <Menu.Item
+              key={index}
+              label={item.label}
+              icon={item.icon}
+              link={item.link}
+              active={pathname === item.link}
+            />
+          ))}
         </Menu>
       </aside>
       <main className="flex-grow px-8">{children}</main>
