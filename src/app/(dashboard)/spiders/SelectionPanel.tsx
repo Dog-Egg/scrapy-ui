@@ -1,10 +1,10 @@
 "use client";
 
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
-import classNames from "classnames";
 import { useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Dropdown, { MenuProps } from "@/components/Dropdown";
+import Menu from "@/components/Menu";
 
 interface Props {
   title: string;
@@ -31,34 +31,30 @@ export default function SelectionPanel(props: Props) {
         {isEmpty(props.options) ? (
           <div className=" text-secondary">{props.emptyText}</div>
         ) : (
-          props.options?.map((option) => (
-            <div
-              key={option}
-              className={classNames(
-                "flex items-center justify-between rounded-lg px-2 py-4",
-                selected === option && "bg-tertiary",
-                selectable && "cursor-pointer",
-              )}
-              onClick={() => {
-                if (!selectable) return;
-                setSelected(option);
-                props.onSelect?.(option);
-              }}
-            >
-              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {option}
-              </span>
-
-              {props.moreActions && (
-                <Dropdown menu={props.moreActions}>
-                  <EllipsisVerticalIcon
-                    className="cursor-pointer hover:text-primary"
-                    width={"1.25em"}
-                  />
-                </Dropdown>
-              )}
-            </div>
-          ))
+          <Menu>
+            {props.options!.map((option) => (
+              <Menu.Item
+                key={option}
+                label={option}
+                active={option == selected}
+                onClick={() => {
+                  if (!selectable) return;
+                  setSelected(option);
+                  props.onSelect?.(option);
+                }}
+                suffixIcon={
+                  props.moreActions ? (
+                    <Dropdown menu={props.moreActions}>
+                      <EllipsisVerticalIcon
+                        className="cursor-pointer hover:text-primary"
+                        width={"1.25em"}
+                      />
+                    </Dropdown>
+                  ) : null
+                }
+              />
+            ))}
+          </Menu>
         )}
       </>
     </div>

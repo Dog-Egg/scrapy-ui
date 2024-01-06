@@ -17,7 +17,7 @@ const meta: Meta<typeof Menu> = {
           style={{
             border: "1px solid rgb(155, 165, 183)",
             borderRadius: "6px",
-            minWidth: "200px",
+            width: "200px",
           }}
         >
           <Story></Story>
@@ -109,7 +109,17 @@ export const SuffixIcon: Story = {
           suffixIcon={<EllipsisVerticalIcon width="1.5em" />}
         />
         <Menu.Item label="List" suffixIcon={<ListBulletIcon />} />
-        <Menu.Item label="Empty" suffixIcon={<></>} />
+        <Menu.Item label="Hidden" suffixIcon={null} />
+      </Menu>
+    );
+  },
+};
+
+export const Overflow: Story = {
+  render() {
+    return (
+      <Menu>
+        <Menu.Item label="这是一串很长很长很长很长很长的文字" />
       </Menu>
     );
   },
