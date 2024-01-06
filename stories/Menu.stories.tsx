@@ -109,6 +109,8 @@ export const SuffixIcon: Story = {
           suffixIcon={<EllipsisVerticalIcon width="1.5em" />}
         />
         <Menu.Item label="List" suffixIcon={<ListBulletIcon />} />
+
+        {/* 设为 null 可以隐藏 suffixIcon */}
         <Menu.Item label="Hidden" suffixIcon={null} />
       </Menu>
     );
