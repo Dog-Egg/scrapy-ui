@@ -22,7 +22,7 @@ export default function DashBoardLayout({
 
   return (
     <div className="flex h-screen">
-      <aside className="flex h-full min-w-72 flex-col border-r border-r-secondary p-4 pt-0 *:grow first:*:grow-0">
+      <aside className="flex h-full min-w-64 flex-col border-r border-r-secondary p-4 pt-0 *:grow first:*:grow-0">
         <h1 className="py-6 text-center text-4xl font-semibold">ScrapyUI</h1>
         <Menu>
           {menuItems.map((item, index) => (

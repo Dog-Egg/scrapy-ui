@@ -1,5 +1,5 @@
 "use client";
-import { PropsWithChildren, useMemo, useState } from "react";
+import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
 import SelectionPanel from "./SelectionPanel";
 import { listprojects, listspiders, listversions } from "@/actions";
 import {
@@ -26,7 +26,8 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   );
   // versions
   const [showVersionPanel, setShowVersionPanel] = useState(false);
-  const [versions, setVersions] = useState<string[]>();
+  const [versions, setVersions] =
+    useState<{ label: ReactNode; value: string }[]>();
 
   async function handleSelectNodeURL(url: string) {
     setSelectedNodeURL(url);
@@ -69,7 +70,18 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
     setShowVersionPanel(true);
     if (selectedNodeURL && selectedProject) {
       const versions = await listversions(selectedNodeURL, selectedProject);
-      setVersions(versions.reverse());
+      const formatted = versions.reverse().map((i, index) => {
+        const label =
+          index === 0 ? (
+            <>
+              {i} <span className="text-sm text-secondary">latest</span>
+            </>
+          ) : (
+            i
+          );
+        return { label, value: i };
+      });
+      setVersions(formatted);
     }
   }
 
@@ -136,7 +148,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
             title="Versions"
             emptyText="Loading..."
             options={versions}
-            defaultActive={versions?.[0]}
+            defaultActive={versions?.[0]?.value}
             onSelect={handleSelectVersion}
           />
           <Arrow></Arrow>

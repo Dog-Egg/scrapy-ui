@@ -1,14 +1,14 @@
 "use client";
 
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Dropdown, { MenuProps } from "@/components/Dropdown";
 import Menu from "@/components/Menu";
 
 interface Props {
   title: string;
-  options?: string[];
+  options?: string[] | { label: ReactNode; value: string }[];
   onSelect?: (option: string) => void;
   emptyText?: string;
   selectable?: boolean;
@@ -16,31 +16,40 @@ interface Props {
   defaultActive?: string;
 }
 export default function SelectionPanel(props: Props) {
-  const { options, selectable = true } = props;
+  const { selectable = true } = props;
   const [selected, setSelected] = useState<string>();
 
   useEffect(() => {
     setSelected(props.defaultActive);
-  }, [options, props.defaultActive]);
+  }, [props.options, props.defaultActive]);
+
+  const options = useMemo(() => {
+    return props.options?.map((i) => {
+      if (typeof i === "string") {
+        return { label: i, value: i };
+      }
+      return i;
+    });
+  }, [props.options]);
 
   return (
     <div className="rounded-xl border border-secondary p-4">
       <h5 className="text-xl">{props.title}</h5>
       <div className="my-4 border-b border-dashed border-b-secondary"></div>
       <>
-        {isEmpty(props.options) ? (
+        {isEmpty(options) ? (
           <div className=" text-secondary">{props.emptyText}</div>
         ) : (
           <Menu>
-            {props.options!.map((option) => (
+            {options!.map((option) => (
               <Menu.Item
-                key={option}
-                label={option}
-                active={option == selected}
+                key={option.value}
+                label={option.label}
+                active={option.value == selected}
                 onClick={() => {
                   if (!selectable) return;
-                  setSelected(option);
-                  props.onSelect?.(option);
+                  setSelected(option.value);
+                  props.onSelect?.(option.value);
                 }}
                 suffixIcon={
                   props.moreActions ? (
