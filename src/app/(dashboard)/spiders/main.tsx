@@ -32,8 +32,6 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   async function handleSelectNodeURL(url: string) {
     setSelectedNodeURL(url);
 
-    setProjects([]);
-    setSelectedProject(undefined);
     fetchProjects(url);
   }
 
@@ -122,7 +120,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
                   }).then(() => {
                     if (selectedNodeURL) {
                       setProjects([]);
-                      setProjectPanelMsg("Loading...");
+                      setProjectPanelMsg("Deleting...");
 
                       delproject(selectedNodeURL, value).then(() => {
                         fetchProjects(selectedNodeURL);
@@ -205,11 +203,14 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   );
 
   async function fetchProjects(url: string) {
+    setProjects([]);
+    setSelectedProject(undefined);
     setProjectPanelMsg("Loading...");
+
     try {
       const projects = await listprojects(url);
-      setProjects(projects);
       if (projects.length) {
+        setProjects(projects);
         setProjectPanelMsg("Project loading completed.");
       } else {
         setProjectPanelMsg("No project.");
