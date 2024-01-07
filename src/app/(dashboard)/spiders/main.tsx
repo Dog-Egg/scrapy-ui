@@ -1,7 +1,7 @@
 "use client";
 import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
 import SelectionPanel from "./SelectionPanel";
-import { listprojects, listspiders, listversions } from "@/actions";
+import { delproject, listprojects, listspiders, listversions } from "@/actions";
 import {
   TrashIcon,
   PlayIcon,
@@ -34,16 +34,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
 
     setProjects([]);
     setSelectedProject(undefined);
-
-    setProjectPanelMsg("Loading...");
-    try {
-      setProjects(await listprojects(url));
-      setProjectPanelMsg("Project loading completed");
-    } catch (e) {
-      if (e instanceof Error) {
-        setProjectPanelMsg(e.message);
-      }
-    }
+    fetchProjects(url);
   }
 
   function setProjects(projects: string[]) {
@@ -106,7 +97,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
 
   const nodeOptions = useMemo(() => nodes.map((n) => n.url), [nodes]);
   return (
-    <div className="flex h-96 px-10 *:mr-3 *:w-0 *:shrink *:basis-0 last:*:mr-0 odd:*:grow-[4] even:*:grow-[3]">
+    <div className="flex h-96 px-10 *:mr-3 *:w-0 *:shrink *:basis-0 last:*:mr-0 odd:*:grow-[2] even:*:grow-[1]">
       <SelectionPanel
         title="Nodes"
         options={nodeOptions}
@@ -118,19 +109,26 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
         emptyText={projectPanelMsg}
         options={projects}
         onSelect={handleSelectProject}
-        moreActions={[
+        moreActions={(value) => [
           {
             label: (
               <div
                 className="flex items-center"
                 onClick={() =>
-                  Modal.confirm({ message: "My Modal" })
-                    .then(() => {
-                      alert("confirm");
-                    })
-                    .catch(() => {
-                      alert("cancel");
-                    })
+                  Modal.confirm({
+                    title: "Delete Confirmation",
+                    message: `Are you sure you want to delete project "${value}"?`,
+                    confirmButtonText: "Delete",
+                  }).then(() => {
+                    if (selectedNodeURL) {
+                      setProjects([]);
+                      setProjectPanelMsg("Loading...");
+
+                      delproject(selectedNodeURL, value).then(() => {
+                        fetchProjects(selectedNodeURL);
+                      });
+                    }
+                  })
                 }
               >
                 <TrashIcon width={"1.25em"} className="mr-2" />
@@ -150,6 +148,27 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
             options={versions}
             defaultActive={versions?.[0]?.value}
             onSelect={handleSelectVersion}
+            moreActions={(value) => [
+              {
+                label: (
+                  <div
+                    className="flex items-center"
+                    onClick={() =>
+                      Modal.confirm({
+                        title: "Delete Confirmation",
+                        message: `Are you sure you want to delete version "${value}"?`,
+                        confirmButtonText: "Delete",
+                      }).then(() => {
+                        alert("confirm");
+                      })
+                    }
+                  >
+                    <TrashIcon width={"1.25em"} className="mr-2" />
+                    Delete this version
+                  </div>
+                ),
+              },
+            ]}
           />
           <Arrow></Arrow>
         </>
@@ -184,6 +203,23 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
       />
     </div>
   );
+
+  async function fetchProjects(url: string) {
+    setProjectPanelMsg("Loading...");
+    try {
+      const projects = await listprojects(url);
+      setProjects(projects);
+      if (projects.length) {
+        setProjectPanelMsg("Project loading completed.");
+      } else {
+        setProjectPanelMsg("No project.");
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        setProjectPanelMsg(e.message);
+      }
+    }
+  }
 }
 
 function Arrow({ children }: PropsWithChildren) {

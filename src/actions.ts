@@ -38,3 +38,16 @@ export async function listspiders(
   const data = await response.json();
   return data.spiders as string[];
 }
+
+export async function delproject(baseURL: string, project: string) {
+  const url = new URL(`delproject.json`, baseURL);
+
+  const form = new FormData();
+  form.append("project", project);
+
+  const response = await request({ url, method: "post", data: form });
+  const data = await response.json();
+  if (data["status"] !== "ok") {
+    throw Error(JSON.stringify(data));
+  }
+}

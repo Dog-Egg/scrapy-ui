@@ -12,7 +12,7 @@ interface Props {
   onSelect?: (option: string) => void;
   emptyText?: string;
   selectable?: boolean;
-  moreActions?: MenuProps;
+  moreActions?: MenuProps | ((value: string) => MenuProps);
   defaultActive?: string;
 }
 export default function SelectionPanel(props: Props) {
@@ -53,12 +53,24 @@ export default function SelectionPanel(props: Props) {
                 }}
                 suffixIcon={
                   props.moreActions ? (
-                    <Dropdown menu={props.moreActions}>
-                      <EllipsisVerticalIcon
-                        className="cursor-pointer hover:text-primary"
-                        width={"1.25em"}
-                      />
-                    </Dropdown>
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <Dropdown
+                        menu={
+                          typeof props.moreActions === "function"
+                            ? props.moreActions(option.value)
+                            : props.moreActions
+                        }
+                      >
+                        <EllipsisVerticalIcon
+                          className="cursor-pointer hover:text-primary"
+                          width={"1.25em"}
+                        />
+                      </Dropdown>
+                    </div>
                   ) : null
                 }
               />

@@ -9,10 +9,17 @@ export async function request({
 }) {
   const headers: Record<string, string> = {};
   let body;
-  if (data) {
+  if (data instanceof FormData) {
+    body = data;
+  } else {
     headers["Content-Type"] = "application/json";
     body = JSON.stringify(data);
   }
-  const response = await fetch(url, { method, headers, body });
+  const response = await fetch(url, {
+    method,
+    headers,
+    body,
+    cache: "no-store",
+  });
   return response;
 }

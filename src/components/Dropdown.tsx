@@ -11,9 +11,10 @@ export type MenuProps = { label: ReactNode }[];
 
 interface Props extends PropsWithChildren {
   menu: MenuProps;
+  onSelect?: () => void;
 }
 
-export default function Dropdown(props: Props) {
+export default function Dropdown<T>(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, floatingStyles, context } = useFloating({
@@ -32,18 +33,9 @@ export default function Dropdown(props: Props) {
     dismiss,
   ]);
 
-  const referenceProps: any = getReferenceProps();
-
   return (
     <>
-      <div
-        ref={refs.setReference}
-        {...referenceProps}
-        onClick={(e) => {
-          e.stopPropagation();
-          referenceProps.onClick?.(e);
-        }}
-      >
+      <div ref={refs.setReference} {...getReferenceProps()}>
         {props.children}
       </div>
       {isOpen && (
@@ -51,15 +43,15 @@ export default function Dropdown(props: Props) {
           ref={refs.setFloating}
           style={floatingStyles}
           {...getFloatingProps()}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
         >
-          <div className="cursor-auto rounded border border-secondary bg-white p-1 text-primary">
+          <div className="cursor-auto overflow-hidden rounded border border-secondary bg-white text-primary">
             {props.menu.map((item, index) => (
               <div
                 key={index}
-                className="min-w-32 cursor-pointer rounded px-2 py-1 text-sm hover:bg-tertiary "
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+                className="min-w-32 cursor-pointer whitespace-nowrap px-3 py-2 text-sm hover:bg-tertiary"
               >
                 {item.label}
               </div>

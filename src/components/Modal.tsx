@@ -55,7 +55,7 @@ Modal.confirm = ({
           <div className="font-normal text-primary">{message}</div>
         </Modal>
         {/* overlay */}
-        <div className="fixed bottom-0 left-0 right-0 top-0 z-10 bg-secondary opacity-10"></div>
+        <div className="fixed bottom-0 left-0 right-0 top-0 z-10 bg-secondary opacity-30"></div>
       </StrictMode>
     );
     root.render(component);
