@@ -240,7 +240,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
 
   function clearSpiders() {
     setSpiders([]);
-    // setSpiderPanelMsg("Please select a project first.");
+    setSpiderPanelMsg("Please select a project first.");
   }
 }
 
