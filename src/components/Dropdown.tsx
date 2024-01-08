@@ -43,6 +43,7 @@ export default function Dropdown<T>(props: Props) {
           ref={refs.setFloating}
           style={floatingStyles}
           {...getFloatingProps()}
+          className="z-10"
         >
           <div className="cursor-auto overflow-hidden rounded border border-secondary bg-white text-primary">
             {props.menu.map((item, index) => (

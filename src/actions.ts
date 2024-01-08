@@ -36,6 +36,13 @@ export async function listspiders(
   }
   const response = await request({ url });
   const data = await response.json();
+  if (data.status === "error") {
+    if ((data.message as string).includes("no active project")) {
+      throw Error("No available spiders.");
+    } else {
+      throw Error(JSON.stringify(data));
+    }
+  }
   return data.spiders as string[];
 }
 
@@ -46,6 +53,22 @@ export async function delproject(baseURL: string, project: string) {
   form.append("project", project);
 
   const response = await request({ url, method: "post", data: form });
+  const data = await response.json();
+  if (data["status"] !== "ok") {
+    throw Error(JSON.stringify(data));
+  }
+}
+
+export async function delversion(
+  baseURL: string,
+  project: string,
+  version: string,
+) {
+  const url = new URL("delversion.json", baseURL);
+  const formdata = new FormData();
+  formdata.append("project", project);
+  formdata.append("version", version);
+  const response = await request({ url, method: "post", data: formdata });
   const data = await response.json();
   if (data["status"] !== "ok") {
     throw Error(JSON.stringify(data));

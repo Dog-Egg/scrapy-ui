@@ -1,7 +1,13 @@
 "use client";
 import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
 import SelectionPanel from "./SelectionPanel";
-import { delproject, listprojects, listspiders, listversions } from "@/actions";
+import {
+  delproject,
+  delversion,
+  listprojects,
+  listspiders,
+  listversions,
+} from "@/actions";
 import {
   TrashIcon,
   PlayIcon,
@@ -26,8 +32,8 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   );
   // versions
   const [showVersionPanel, setShowVersionPanel] = useState(false);
-  const [versions, setVersions] =
-    useState<{ label: ReactNode; value: string }[]>();
+  const [versions, setVersions] = useState<string[]>();
+  const [versionsMsg, setVersionsMsg] = useState("Loading...");
 
   async function handleSelectNodeURL(url: string) {
     setSelectedNodeURL(url);
@@ -48,29 +54,21 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   async function handleSelectProject(project: string) {
     setSelectedProject(project);
 
-    setSpiders([]);
+    if (showVersionPanel) {
+      if (selectedNodeURL) {
+        fetchVersions(selectedNodeURL, project);
+      }
+    }
 
     if (selectedNodeURL) {
-      await fetchSpiders(selectedNodeURL, project);
+      fetchSpiders(selectedNodeURL, project);
     }
   }
 
   async function handleShowVersionPanel() {
     setShowVersionPanel(true);
     if (selectedNodeURL && selectedProject) {
-      const versions = await listversions(selectedNodeURL, selectedProject);
-      const formatted = versions.reverse().map((i, index) => {
-        const label =
-          index === 0 ? (
-            <>
-              {i} <span className="text-sm text-secondary">latest</span>
-            </>
-          ) : (
-            i
-          );
-        return { label, value: i };
-      });
-      setVersions(formatted);
+      fetchVersions(selectedNodeURL, selectedProject);
     }
   }
 
@@ -82,7 +80,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
 
   async function fetchSpiders(url: string, project: string, version?: string) {
     setSpiders([]);
-    setSpiderPanelMsg("Loading");
+    setSpiderPanelMsg("Loading...");
 
     try {
       setSpiders(await listspiders(url, project, version));
@@ -142,9 +140,9 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
           <Arrow></Arrow>
           <SelectionPanel
             title="Versions"
-            emptyText="Loading..."
+            emptyText={versionsMsg}
             options={versions}
-            defaultActive={versions?.[0]?.value}
+            defaultActive={versions?.[0]}
             onSelect={handleSelectVersion}
             moreActions={(value) => [
               {
@@ -157,7 +155,17 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
                         message: `Are you sure you want to delete version "${value}"?`,
                         confirmButtonText: "Delete",
                       }).then(() => {
-                        alert("confirm");
+                        if (selectedNodeURL && selectedProject) {
+                          setVersions([]);
+                          setVersionsMsg("Deleting...");
+                          delversion(
+                            selectedNodeURL,
+                            selectedProject,
+                            value,
+                          ).then(() => {
+                            fetchVersions(selectedNodeURL, selectedProject);
+                          });
+                        }
                       })
                     }
                   >
@@ -213,11 +221,29 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
         setProjects(projects);
         setProjectPanelMsg("Project loading completed.");
       } else {
-        setProjectPanelMsg("No project.");
+        setProjectPanelMsg("No available project.");
       }
     } catch (e) {
       if (e instanceof Error) {
         setProjectPanelMsg(e.message);
+      }
+    }
+  }
+
+  async function fetchVersions(url: string, project: string) {
+    setVersions([]);
+    setVersionsMsg("Loading...");
+    try {
+      const versions = (await listversions(url, project)).reverse();
+      if (versions.length) {
+        setVersions(versions);
+        setVersionsMsg("Version loading completed.");
+      } else {
+        setVersionsMsg("No available version.");
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        setVersionsMsg(e.message);
       }
     }
   }
