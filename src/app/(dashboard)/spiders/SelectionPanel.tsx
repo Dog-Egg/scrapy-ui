@@ -3,34 +3,32 @@
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import isEmpty from "lodash/isEmpty";
-import Dropdown, { MenuProps } from "@/components/Dropdown";
+import Dropdown from "@/components/Dropdown";
 import Menu from "@/components/Menu";
 
-interface Props {
+interface Props<T> {
   title: string;
-  options?: string[] | { label: ReactNode; value: string }[];
+  options?: T[];
   onSelect?: (option: string) => void;
   emptyText?: string;
   selectable?: boolean;
-  moreActions?: MenuProps | ((value: string) => MenuProps);
-  defaultActive?: string;
+  actions?: {
+    label: string;
+    icon?: ReactNode;
+    onClick?: (option: T) => void;
+  }[];
+  defaultActive?: T;
 }
-export default function SelectionPanel(props: Props) {
-  const { selectable = true } = props;
+export default function SelectionPanel({
+  options,
+  selectable = true,
+  ...props
+}: Props<string>) {
   const [selected, setSelected] = useState<string>();
 
   useEffect(() => {
     setSelected(props.defaultActive);
-  }, [props.options, props.defaultActive]);
-
-  const options = useMemo(() => {
-    return props.options?.map((i) => {
-      if (typeof i === "string") {
-        return { label: i, value: i };
-      }
-      return i;
-    });
-  }, [props.options]);
+  }, [options, props.defaultActive]);
 
   return (
     <div className="rounded-xl border border-secondary p-4">
@@ -41,29 +39,31 @@ export default function SelectionPanel(props: Props) {
           <div className=" text-secondary">{props.emptyText}</div>
         ) : (
           <Menu>
-            {options!.map((option) => (
+            {options?.map((option) => (
               <Menu.Item
-                key={option.value}
-                label={option.label}
-                active={option.value == selected}
+                key={option}
+                label={option}
+                active={option == selected}
                 onClick={() => {
                   if (!selectable) return;
-                  setSelected(option.value);
-                  props.onSelect?.(option.value);
+                  setSelected(option);
+                  props.onSelect?.(option);
                 }}
                 suffixIcon={
-                  props.moreActions ? (
+                  props.actions ? (
                     <div
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
                     >
                       <Dropdown
-                        menu={
-                          typeof props.moreActions === "function"
-                            ? props.moreActions(option.value)
-                            : props.moreActions
-                        }
+                        onSelect={(index) => {
+                          props.actions?.[index as number].onClick?.(option);
+                        }}
+                        menu={props.actions.map((item) => ({
+                          label: item.label,
+                          icon: item.icon,
+                        }))}
                       >
                         <EllipsisVerticalIcon
                           className="cursor-pointer hover:text-primary"

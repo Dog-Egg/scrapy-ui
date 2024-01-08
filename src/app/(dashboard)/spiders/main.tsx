@@ -105,32 +105,26 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
         emptyText={projectPanelMsg}
         options={projects}
         onSelect={handleSelectProject}
-        moreActions={(value) => [
+        actions={[
           {
-            label: (
-              <div
-                className="flex items-center"
-                onClick={() =>
-                  Modal.confirm({
-                    title: "Delete Confirmation",
-                    message: `Are you sure you want to delete project "${value}"?`,
-                    confirmButtonText: "Delete",
-                  }).then(() => {
-                    if (selectedNodeURL) {
-                      setProjects([]);
-                      setProjectPanelMsg("Deleting...");
+            label: "Delete this project",
+            icon: <TrashIcon />,
+            onClick(option) {
+              Modal.confirm({
+                title: "Delete Confirmation",
+                message: `Are you sure you want to delete project "${option}"?`,
+                confirmButtonText: "Delete",
+              }).then(() => {
+                if (selectedNodeURL) {
+                  setProjects([]);
+                  setProjectPanelMsg("Deleting...");
 
-                      delproject(selectedNodeURL, value).then(() => {
-                        fetchProjects(selectedNodeURL);
-                      });
-                    }
-                  })
+                  delproject(selectedNodeURL, option).then(() => {
+                    fetchProjects(selectedNodeURL);
+                  });
                 }
-              >
-                <TrashIcon width={"1.25em"} className="mr-2" />
-                Delete this project
-              </div>
-            ),
+              });
+            },
           },
         ]}
       />
@@ -144,35 +138,27 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
             options={versions}
             defaultActive={versions?.[0]}
             onSelect={handleSelectVersion}
-            moreActions={(value) => [
+            actions={[
               {
-                label: (
-                  <div
-                    className="flex items-center"
-                    onClick={() =>
-                      Modal.confirm({
-                        title: "Delete Confirmation",
-                        message: `Are you sure you want to delete version "${value}"?`,
-                        confirmButtonText: "Delete",
-                      }).then(() => {
-                        if (selectedNodeURL && selectedProject) {
-                          setVersions([]);
-                          setVersionsMsg("Deleting...");
-                          delversion(
-                            selectedNodeURL,
-                            selectedProject,
-                            value,
-                          ).then(() => {
-                            fetchVersions(selectedNodeURL, selectedProject);
-                          });
-                        }
-                      })
+                label: "Delete this version",
+                icon: <TrashIcon />,
+                onClick(option) {
+                  Modal.confirm({
+                    title: "Delete Confirmation",
+                    message: `Are you sure you want to delete version "${option}"?`,
+                    confirmButtonText: "Delete",
+                  }).then(() => {
+                    if (selectedNodeURL && selectedProject) {
+                      setVersions([]);
+                      setVersionsMsg("Deleting...");
+                      delversion(selectedNodeURL, selectedProject, option).then(
+                        () => {
+                          fetchVersions(selectedNodeURL, selectedProject);
+                        },
+                      );
                     }
-                  >
-                    <TrashIcon width={"1.25em"} className="mr-2" />
-                    Delete this version
-                  </div>
-                ),
+                  });
+                },
               },
             ]}
           />
@@ -196,14 +182,10 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
         selectable={false}
         options={spiders}
         emptyText={spiderPanelMsg}
-        moreActions={[
+        actions={[
           {
-            label: (
-              <div className="flex items-center">
-                <PlayIcon width={"1.25em"} className="mr-2" />
-                Schedule this spider
-              </div>
-            ),
+            label: "Schedule this spider",
+            icon: <PlayIcon />,
           },
         ]}
       />

@@ -7,11 +7,13 @@ import {
 } from "@floating-ui/react";
 import { PropsWithChildren, ReactNode, useState } from "react";
 
-export type MenuProps = { label: ReactNode }[];
-
 interface Props extends PropsWithChildren {
-  menu: MenuProps;
-  onSelect?: () => void;
+  menu: {
+    label: ReactNode;
+    key?: string;
+    icon?: ReactNode;
+  }[];
+  onSelect?: (key: string | number) => void;
 }
 
 export default function Dropdown<T>(props: Props) {
@@ -51,10 +53,16 @@ export default function Dropdown<T>(props: Props) {
                 key={index}
                 onClick={() => {
                   setIsOpen(false);
+                  props.onSelect?.(item.key ?? index);
                 }}
                 className="min-w-32 cursor-pointer whitespace-nowrap px-3 py-2 text-sm hover:bg-tertiary"
               >
-                {item.label}
+                <div className="flex items-center">
+                  {item.icon && (
+                    <span className="mr-2 w-[1.25em]">{item.icon}</span>
+                  )}
+                  <span>{item.label}</span>
+                </div>
               </div>
             ))}
           </div>
