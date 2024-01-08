@@ -1,7 +1,7 @@
 "use client";
 
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import isEmpty from "lodash/isEmpty";
 import Dropdown from "@/components/Dropdown";
 import Menu from "@/components/Menu";
@@ -9,27 +9,20 @@ import Menu from "@/components/Menu";
 interface Props<T> {
   title: string;
   options?: T[];
+  selected?: T;
   onSelect?: (option: string) => void;
   emptyText?: string;
-  selectable?: boolean;
   actions?: {
     label: string;
     icon?: ReactNode;
     onClick?: (option: T) => void;
   }[];
-  defaultActive?: T;
 }
 export default function SelectionPanel({
   options,
-  selectable = true,
+  selected,
   ...props
 }: Props<string>) {
-  const [selected, setSelected] = useState<string>();
-
-  useEffect(() => {
-    setSelected(props.defaultActive);
-  }, [options, props.defaultActive]);
-
   return (
     <div className="rounded-xl border border-secondary p-4">
       <h5 className="text-xl">{props.title}</h5>
@@ -45,8 +38,6 @@ export default function SelectionPanel({
                 label={option}
                 active={option == selected}
                 onClick={() => {
-                  if (!selectable) return;
-                  setSelected(option);
                   props.onSelect?.(option);
                 }}
                 suffixIcon={

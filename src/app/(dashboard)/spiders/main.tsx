@@ -20,7 +20,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   // nodes
   const [selectedNodeURL, setSelectedNodeURL] = useState<string>();
   // projects
-  const [projects, _setProjects] = useState<string[]>();
+  const [projects, setProjects] = useState<string[]>();
   const [projectPanelMsg, setProjectPanelMsg] = useState(
     "Please select a node first.",
   );
@@ -34,21 +34,12 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   const [showVersionPanel, setShowVersionPanel] = useState(false);
   const [versions, setVersions] = useState<string[]>();
   const [versionsMsg, setVersionsMsg] = useState("Loading...");
+  const [selectedVersion, setSelectedVersion] = useState<string>();
 
   async function handleSelectNodeURL(url: string) {
     setSelectedNodeURL(url);
 
     fetchProjects(url);
-  }
-
-  function setProjects(projects: string[]) {
-    _setProjects(projects);
-
-    setShowVersionPanel(false);
-    setVersions([]);
-
-    setSpiders([]);
-    setSpiderPanelMsg("Please select a project first.");
   }
 
   async function handleSelectProject(project: string) {
@@ -73,13 +64,14 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   }
 
   async function handleSelectVersion(version: string) {
+    setSelectedVersion(version);
     if (selectedNodeURL && selectedProject) {
       await fetchSpiders(selectedNodeURL, selectedProject, version);
     }
   }
 
   async function fetchSpiders(url: string, project: string, version?: string) {
-    setSpiders([]);
+    clearSpiders();
     setSpiderPanelMsg("Loading...");
 
     try {
@@ -98,12 +90,14 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
         title="Nodes"
         options={nodeOptions}
         onSelect={handleSelectNodeURL}
+        selected={selectedNodeURL}
       />
       <Arrow></Arrow>
       <SelectionPanel
         title="Projects"
         emptyText={projectPanelMsg}
         options={projects}
+        selected={selectedProject}
         onSelect={handleSelectProject}
         actions={[
           {
@@ -116,7 +110,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
                 confirmButtonText: "Delete",
               }).then(() => {
                 if (selectedNodeURL) {
-                  setProjects([]);
+                  clearProjects();
                   setProjectPanelMsg("Deleting...");
 
                   delproject(selectedNodeURL, option).then(() => {
@@ -136,7 +130,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
             title="Versions"
             emptyText={versionsMsg}
             options={versions}
-            defaultActive={versions?.[0]}
+            selected={selectedVersion}
             onSelect={handleSelectVersion}
             actions={[
               {
@@ -149,7 +143,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
                     confirmButtonText: "Delete",
                   }).then(() => {
                     if (selectedNodeURL && selectedProject) {
-                      setVersions([]);
+                      clearVersions();
                       setVersionsMsg("Deleting...");
                       delversion(selectedNodeURL, selectedProject, option).then(
                         () => {
@@ -179,7 +173,6 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
       )}
       <SelectionPanel
         title="Spiders"
-        selectable={false}
         options={spiders}
         emptyText={spiderPanelMsg}
         actions={[
@@ -193,8 +186,7 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   );
 
   async function fetchProjects(url: string) {
-    setProjects([]);
-    setSelectedProject(undefined);
+    clearProjects();
     setProjectPanelMsg("Loading...");
 
     try {
@@ -213,12 +205,13 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
   }
 
   async function fetchVersions(url: string, project: string) {
-    setVersions([]);
+    clearVersions();
     setVersionsMsg("Loading...");
     try {
       const versions = (await listversions(url, project)).reverse();
       if (versions.length) {
         setVersions(versions);
+        setSelectedVersion(versions[0]);
         setVersionsMsg("Version loading completed.");
       } else {
         setVersionsMsg("No available version.");
@@ -228,6 +221,26 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
         setVersionsMsg(e.message);
       }
     }
+  }
+
+  function clearProjects() {
+    setProjects([]);
+    setSelectedProject(undefined);
+
+    setShowVersionPanel(false);
+    clearVersions();
+
+    clearSpiders();
+  }
+
+  function clearVersions() {
+    setVersions([]);
+    setSelectedVersion(undefined);
+  }
+
+  function clearSpiders() {
+    setSpiders([]);
+    // setSpiderPanelMsg("Please select a project first.");
   }
 }
 
