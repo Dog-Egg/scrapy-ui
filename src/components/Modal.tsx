@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode, StrictMode } from "react";
+import { PropsWithChildren, ReactNode, StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import Button from "./Button";
 import { CheckIcon } from "@heroicons/react/16/solid";
@@ -8,6 +8,14 @@ interface Props extends PropsWithChildren {
 }
 
 export default function Modal({ children, footer }: Props) {
+  useEffect(() => {
+    // 组件挂载时禁止 body 滚动
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
     <div className="fixed left-1/2 top-1/3 z-50 -translate-x-1/2">
       <div className="m-auto min-w-96 rounded-2xl border border-secondary bg-white">
