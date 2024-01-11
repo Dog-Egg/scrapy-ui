@@ -1,14 +1,15 @@
-import { HTMLInputTypeAttribute, useContext, useEffect, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { FormItemContext } from "./Form";
 
 interface Props {
   placeholder?: string;
   onChange?: (value: string) => void;
   defaultValue?: string;
-  type?: HTMLInputTypeAttribute;
+  type?: "url" | "text";
+  suffixIcon?: ReactNode;
 }
 
-function Input(props: Props) {
+function Input({ type = "text", ...props }: Props) {
   const { defaultValue } = props;
 
   const formItem = useContext(FormItemContext);
@@ -19,17 +20,20 @@ function Input(props: Props) {
   }, [internalValue, formItem]);
 
   return (
-    <input
-      className="block w-full rounded-md border border-primary px-3 py-3 outline-none placeholder:text-secondary group-[.is-error]:border-danger"
-      type={props.type}
-      placeholder={props.placeholder}
-      onChange={(e) => {
-        const value = e.target.value;
-        setInteralValue(value);
-        props.onChange && props.onChange(value);
-      }}
-      defaultValue={props.defaultValue}
-    />
+    <div className="flex items-center rounded-md border border-primary p-3 group-[.is-error]:border-danger">
+      <input
+        className="outline-none placeholder:text-secondary"
+        type={type}
+        placeholder={props.placeholder}
+        onChange={(e) => {
+          const value = e.target.value;
+          setInteralValue(value);
+          props.onChange && props.onChange(value);
+        }}
+        defaultValue={props.defaultValue}
+      />
+      {props.suffixIcon && <span className="ml-3 w-6">{props.suffixIcon}</span>}
+    </div>
   );
 }
 

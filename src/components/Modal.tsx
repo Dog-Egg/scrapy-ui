@@ -50,7 +50,7 @@ Modal.confirm = ({
         <Modal
           footer={
             <div className="flex *:grow *:basis-0">
-              <Button type="tertiary" onClick={onCancel}>
+              <Button type="secondary" onClick={onCancel}>
                 Cancel
               </Button>
               <Button onClick={onConfirm} suffixIcon={<CheckIcon />}>

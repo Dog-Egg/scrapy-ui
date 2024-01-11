@@ -38,7 +38,7 @@ interface FormItemProps extends PropsWithChildren {
   prop?: string;
   label?: string;
   errorMsg?: string;
-  validators: Array<(value: any) => void>;
+  validators?: Array<(value: any) => void>;
   onClearErrorMsg?: () => void;
 }
 
@@ -57,20 +57,21 @@ function FormItem(props: FormItemProps) {
   const [formItem] = useState(() => {
     const obj = new FormItemObject();
     props.prop && obj.setProp(props.prop);
-    obj.setValidators(
-      validators.map((fn) => {
-        return (value) => {
-          try {
-            fn(value);
-          } catch (e) {
-            if (e instanceof Error) {
-              setInteralErrMsg(e.message);
+    validators &&
+      obj.setValidators(
+        validators.map((fn) => {
+          return (value) => {
+            try {
+              fn(value);
+            } catch (e) {
+              if (e instanceof Error) {
+                setInteralErrMsg(e.message);
+              }
+              throw e;
             }
-            throw e;
-          }
-        };
-      }),
-    );
+          };
+        }),
+      );
     obj.onValueChange(() => {
       // 字段输入改变后清除错误消息。
       setInteralErrMsg(""); // 清除内部错误信息

@@ -2,7 +2,7 @@ import { PropsWithChildren, ReactNode } from "react";
 import classNames from "classnames";
 
 interface Props extends PropsWithChildren {
-  type?: "primary" | "tertiary";
+  type?: "primary" | "secondary" | "outline";
   icon?: ReactNode;
   suffixIcon?: ReactNode;
   onClick?: () => void;
@@ -17,7 +17,9 @@ function Button({ children, type = "primary", ...props }: Props) {
       className={classNames([
         "cursor-pointer rounded-md px-4 py-3 text-base", // button common
         type == "primary" && "bg-primary text-white",
-        type == "tertiary" && "bg-tertiary text-primary",
+        type == "secondary" && "bg-tertiary text-primary",
+        type == "outline" &&
+          "text-primary outline outline-2 -outline-offset-2 outline-primary",
         props.block && "w-full",
         "disabled:bg-secondary",
         "[&+&]:ml-4",

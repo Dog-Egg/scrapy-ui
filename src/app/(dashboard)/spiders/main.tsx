@@ -1,5 +1,5 @@
 "use client";
-import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
+import { PropsWithChildren, useMemo, useState } from "react";
 import SelectionPanel from "./SelectionPanel";
 import {
   delproject,
@@ -15,8 +15,11 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import Modal from "@/components/Modal";
+import { useRouter } from "next/navigation";
 
 export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
+  const router = useRouter();
+
   // nodes
   const [selectedNodeURL, setSelectedNodeURL] = useState<string>();
   // projects
@@ -179,6 +182,15 @@ export default function Main({ nodes }: { nodes: ScrayUI.Node[] }) {
           {
             label: "Schedule this spider",
             icon: <PlayIcon />,
+            onClick(option) {
+              const search = new URLSearchParams({
+                url: selectedNodeURL || "",
+                project: selectedProject || "",
+                version: selectedVersion || "",
+                spider: option,
+              });
+              router.push("/spiders/schedule?" + search.toString());
+            },
           },
         ]}
       />

@@ -21,7 +21,8 @@ export const Type: Story = {
     return (
       <div>
         <Button {...args} type="primary"></Button>
-        <Button {...args} type="tertiary"></Button>
+        <Button {...args} type="secondary"></Button>
+        <Button {...args} type="outline"></Button>
       </div>
     );
   },

@@ -2,7 +2,7 @@ services:
   scrapyd:
     build: ./scrapyd
     ports:
-      - 6800:6800
+      - 127.0.0.1:6800:6800
   scrapy-deploy:
     build: ./scrapy
     depends_on:

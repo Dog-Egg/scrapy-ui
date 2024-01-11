@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 const menuItems = [
   { label: "Nodes", link: "/nodes", icon: <ServerStackIcon /> },
   { label: "Jobs", link: "/jobs", icon: <ListBulletIcon /> },
-  { label: "Spider", link: "/spiders", icon: <BugAntIcon /> },
+  { label: "Spiders", link: "/spiders", icon: <BugAntIcon /> },
 ];
 
 export default function DashBoardLayout({
