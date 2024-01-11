@@ -23,6 +23,7 @@ export const Type: Story = {
         <Button {...args} type="primary"></Button>
         <Button {...args} type="secondary"></Button>
         <Button {...args} type="outline"></Button>
+        <Button {...args} type="dashed"></Button>
       </div>
     );
   },
