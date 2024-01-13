@@ -74,3 +74,37 @@ export async function delversion(
     throw Error(JSON.stringify(data));
   }
 }
+
+export async function schedule(
+  baseURL: string,
+  project: string,
+  spider: string,
+  version?: string,
+  options?: {
+    priority?: number;
+    settings?: Record<string, string>;
+    arguments?: Record<string, string>;
+  },
+) {
+  const url = new URL("schedule.json", baseURL);
+
+  const formdata = new FormData();
+  formdata.append("project", project);
+  formdata.append("spider", spider);
+  version && formdata.append("_version", version);
+  options?.priority && formdata.append("priority", options.priority.toString());
+  if (options?.settings)
+    for (const [k, v] of Object.entries(options.settings)) {
+      formdata.append(k, v);
+    }
+  if (options?.arguments)
+    for (const [k, v] of Object.entries(options.arguments)) {
+      formdata.append(k, v);
+    }
+
+  const response = await request({ url, method: "post", data: formdata });
+  const data = await response.json();
+  if (data.status !== "ok") {
+    throw Error(JSON.stringify(data));
+  }
+}

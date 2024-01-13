@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import {
   useClick,
@@ -15,10 +15,12 @@ export default function Select<T>({
   options,
   onChange,
   placeholder,
+  defaultValue,
 }: {
   options: Option<T>[];
   onChange?: (value: T) => unknown;
   placeholder?: string;
+  defaultValue?: T;
 }) {
   // floating
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +37,13 @@ export default function Select<T>({
 
   //
   const [selectedOption, setSelectedOption] = useState<Option<T>>();
+
+  useEffect(() => {
+    if (defaultValue !== undefined) {
+      const option = options.find((option) => option.value == defaultValue);
+      setSelectedOption(option);
+    }
+  }, []);
 
   const formField = useFormField();
 
@@ -53,7 +62,11 @@ export default function Select<T>({
       >
         <div className="flex items-center">
           {selectedOption ? (
-            <span>{selectedOption.label}</span>
+            <span
+              className={classNames(isOpen ? "text-secondary" : "text-primary")}
+            >
+              {selectedOption.label}
+            </span>
           ) : (
             // placeholder
             <span className="text-secondary">{placeholder}</span>
@@ -72,7 +85,10 @@ export default function Select<T>({
         >
           {options.map((option) => (
             <div
-              className="cursor-pointer p-3 hover:bg-tertiary"
+              className={classNames(
+                "cursor-pointer p-3 hover:bg-tertiary",
+                selectedOption === option && "bg-tertiary",
+              )}
               onClick={() => {
                 setIsOpen(false);
                 onChange?.(option.value);

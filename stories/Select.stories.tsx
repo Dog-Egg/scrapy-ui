@@ -19,3 +19,14 @@ export const Demo: Story = {
     ],
   },
 };
+
+export const defaultValue: Story = {
+  args: {
+    options: [
+      { label: "High", value: 10 },
+      { label: "Medium", value: 0 },
+      { label: "Low", value: -10 },
+    ],
+    defaultValue: 0,
+  },
+};

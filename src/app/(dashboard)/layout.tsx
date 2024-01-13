@@ -36,7 +36,7 @@ export default function DashBoardLayout({
           ))}
         </Menu>
       </aside>
-      <main className="flex-grow px-8">{children}</main>
+      <main className="flex-grow overflow-y-scroll px-8">{children}</main>
     </div>
   );
 }
