@@ -1,5 +1,5 @@
-import { ReactNode, useContext, useEffect, useState } from "react";
-import { FormItemContext } from "./Form";
+import { ReactNode, useEffect, useState } from "react";
+import { useFormField } from "./Form";
 
 interface Props {
   placeholder?: string;
@@ -12,17 +12,17 @@ interface Props {
 function Input({ type = "text", ...props }: Props) {
   const { defaultValue } = props;
 
-  const formItem = useContext(FormItemContext);
+  const formField = useFormField();
   const [internalValue, setInteralValue] = useState(defaultValue);
 
   useEffect(() => {
-    formItem?.setValue(internalValue);
-  }, [internalValue, formItem]);
+    formField?.setValue(internalValue);
+  }, [internalValue]);
 
   return (
     <div className="flex items-center rounded-md border border-primary p-3 group-[.is-error]:border-danger">
       <input
-        className="outline-none placeholder:text-secondary"
+        className="w-full leading-6 outline-none placeholder:text-secondary"
         type={type}
         placeholder={props.placeholder}
         onChange={(e) => {

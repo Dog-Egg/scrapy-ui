@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { ButtonHTMLAttributes, PropsWithChildren, ReactNode } from "react";
 import classNames from "classnames";
 
 interface Props extends PropsWithChildren {
@@ -8,11 +8,13 @@ interface Props extends PropsWithChildren {
   onClick?: () => void;
   block?: boolean;
   disabled?: boolean;
+  htmlType?: ButtonHTMLAttributes<unknown>["type"];
 }
 
-function Button({ children, type = "primary", ...props }: Props) {
+function Button({ htmlType, children, type = "primary", ...props }: Props) {
   return (
     <button
+      type={htmlType}
       data-button
       className={classNames([
         "cursor-pointer rounded-md px-4 py-3 text-base font-semibold", // button common

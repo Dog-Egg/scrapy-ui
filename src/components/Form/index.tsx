@@ -7,10 +7,11 @@ import {
   useEffect,
   useId,
 } from "react";
+import set from "lodash/set";
 
 interface FormProps extends PropsWithChildren {
   className?: string;
-  onSubmit?: (data: any) => void;
+  onSubmit?: (values: any) => void;
 }
 
 const FormContext = createContext<FormObject | null>(null);
@@ -42,7 +43,11 @@ interface FormItemProps extends PropsWithChildren {
   onClearErrorMsg?: () => void;
 }
 
-export const FormItemContext = createContext<FormItemObject | null>(null);
+const FormFieldContext = createContext<FormField | null>(null);
+
+export function useFormField() {
+  return useContext(FormFieldContext);
+}
 
 function FormItem(props: FormItemProps) {
   const {
@@ -55,7 +60,7 @@ function FormItem(props: FormItemProps) {
   const id = useId();
 
   const [formItem] = useState(() => {
-    const obj = new FormItemObject();
+    const obj = new FormField();
     props.prop && obj.setProp(props.prop);
     validators &&
       obj.setValidators(
@@ -86,7 +91,7 @@ function FormItem(props: FormItemProps) {
   const form = useContext(FormContext);
   useEffect(() => {
     // 安装/卸载字段
-    form?.installItem(id, formItem);
+    form?.installField(id, formItem);
     return () => {
       form?.uninstallItem(id);
     };
@@ -97,9 +102,9 @@ function FormItem(props: FormItemProps) {
       {label && (
         <label className="mb-2 block text-sm font-normal">{label}</label>
       )}
-      <FormItemContext.Provider value={formItem}>
+      <FormFieldContext.Provider value={formItem}>
         {children}
-      </FormItemContext.Provider>
+      </FormFieldContext.Provider>
       {errMsg && (
         <span className="absolute -bottom-5 left-0 text-xs text-danger">
           {errMsg}
@@ -113,30 +118,30 @@ Form.Item = FormItem;
 export default Form;
 
 class FormObject {
-  private formItemMap = new Map<string, FormItemObject>();
-  installItem(id: string, formItem: FormItemObject) {
-    this.formItemMap.set(id, formItem);
+  private formFieldMap = new Map<string, FormField>();
+  installField(id: string, formField: FormField) {
+    this.formFieldMap.set(id, formField);
   }
 
   uninstallItem(id: string) {
-    this.formItemMap.delete(id);
+    this.formFieldMap.delete(id);
   }
 
   getValues() {
-    const map = new Map();
-    this.formItemMap.forEach((formItem) => {
-      const value = formItem.getValue();
-      const prop = formItem.getProp();
+    const values = {};
+    this.formFieldMap.forEach((formField) => {
+      const value = formField.getValue();
+      const prop = formField.getProp();
       if (value !== undefined && prop) {
-        map.set(prop, value);
+        set(values, prop, value);
       }
     });
-    return Object.fromEntries(map.entries());
+    return values;
   }
 
   validateFields() {
     let result = true;
-    for (const formItem of Array.from(this.formItemMap.values())) {
+    for (const formItem of Array.from(this.formFieldMap.values())) {
       try {
         formItem.validateValue();
       } catch (e) {
@@ -152,7 +157,7 @@ class FormObject {
   }
 }
 
-class FormItemObject {
+class FormField {
   private prop: string | undefined;
   private value = undefined;
   private validators: ((value: any) => void)[] = [];

@@ -7,12 +7,13 @@ import {
   useInteractions,
 } from "@floating-ui/react";
 import classNames from "classnames";
+import { useFormField } from "./Form";
 
 type Option<T> = { label: string; value: T };
 
 export default function Select<T>({
   options,
-  onChange: onSelect,
+  onChange,
   placeholder,
 }: {
   options: Option<T>[];
@@ -35,13 +36,16 @@ export default function Select<T>({
   //
   const [selectedOption, setSelectedOption] = useState<Option<T>>();
 
+  const formField = useFormField();
+
   return (
-    <div className="relative min-w-60">
+    <div className="relative">
       {/* select main */}
       <div
         className={classNames(
           "cursor-pointer p-3",
-          !isOpen && "rounded-md border border-primary",
+          !isOpen &&
+            "rounded-md border border-primary group-[.is-error]:border-danger",
           isOpen && "rounded-t-md border border-primary border-b-tertiary",
         )}
         ref={refs.setReference}
@@ -64,14 +68,15 @@ export default function Select<T>({
           ref={refs.setFloating}
           style={floatingStyles}
           {...getFloatingProps()}
-          className="w-full overflow-hidden rounded-b-md border-b border-l border-r border-primary"
+          className="z-10 w-full overflow-hidden rounded-b-md border-b border-l border-r border-primary bg-white"
         >
           {options.map((option) => (
             <div
               className="cursor-pointer p-3 hover:bg-tertiary"
               onClick={() => {
                 setIsOpen(false);
-                onSelect?.(option.value);
+                onChange?.(option.value);
+                formField?.setValue(option.value);
                 setSelectedOption(option);
               }}
             >
