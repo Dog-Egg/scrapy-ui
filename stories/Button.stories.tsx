@@ -29,6 +29,13 @@ export const Type: Story = {
   },
 };
 
+export const Pill: Story = {
+  ...Type,
+  args: {
+    pill: true,
+  },
+};
+
 export const Icon: Story = {
   args: {
     icon: <PlusCircleIcon />,

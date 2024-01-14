@@ -9,15 +9,25 @@ interface Props extends PropsWithChildren {
   block?: boolean;
   disabled?: boolean;
   htmlType?: ButtonHTMLAttributes<unknown>["type"];
+  pill?: boolean;
 }
 
-function Button({ htmlType, children, type = "primary", ...props }: Props) {
+function Button({
+  htmlType,
+  children,
+  type = "primary",
+  pill = false,
+  ...props
+}: Props) {
   return (
     <button
       type={htmlType}
       data-button
       className={classNames([
-        "cursor-pointer rounded-md px-4 py-3 text-base font-semibold", // button common
+        "cursor-pointer font-semibold", // button common
+        pill
+          ? "rounded-full px-4 py-2 text-sm"
+          : "rounded-md px-4 py-3 text-base",
         type == "primary" && "bg-primary text-white",
         type == "secondary" && "bg-tertiary text-primary",
         type == "outline" &&
