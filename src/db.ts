@@ -1,6 +1,10 @@
 "use server";
 
-const nodes: ScrayUI.Node[] = [
+export interface Node {
+  url: string;
+}
+
+const nodes: Node[] = [
   { url: "http://127.0.0.1:6800/" },
   { url: "http://127.0.0.1:6801/" },
 ];
@@ -8,7 +12,7 @@ const nodes: ScrayUI.Node[] = [
 /**
  * 添加 Node。
  */
-export async function addNode(data: ScrayUI.Node) {
+export async function addNode(data: Node) {
   nodes.push({ ...data, url: format_url(data.url) });
 }
 

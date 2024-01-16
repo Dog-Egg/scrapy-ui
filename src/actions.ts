@@ -79,8 +79,8 @@ export async function schedule(
   baseURL: string,
   project: string,
   spider: string,
-  version?: string,
   options?: {
+    version?: string;
     priority?: number;
     settings?: Record<string, string>;
     arguments?: Record<string, string>;
@@ -91,7 +91,7 @@ export async function schedule(
   const formdata = new FormData();
   formdata.append("project", project);
   formdata.append("spider", spider);
-  version && formdata.append("_version", version);
+  options?.version && formdata.append("_version", options.version);
   options?.priority && formdata.append("priority", options.priority.toString());
   if (options?.settings)
     for (const [k, v] of Object.entries(options.settings)) {
@@ -107,4 +107,42 @@ export async function schedule(
   if (data.status !== "ok") {
     throw Error(JSON.stringify(data));
   }
+}
+
+export async function daemonstatus(baseUrl: string) {
+  const url = new URL("daemonstatus.json", baseUrl);
+  const response = await request({ url });
+  const data: {
+    running: number;
+    pending: number;
+    finished: number;
+    node_name: string;
+  } = await response.json();
+  return data;
+}
+
+export type PendingJob = {
+  id: string;
+  project: string;
+  spider: string;
+};
+
+export type RunningJob = PendingJob & {
+  start_time: string;
+};
+
+export type FinishedJob = RunningJob & {
+  end_time: string;
+  log_url: string;
+};
+
+export async function listjobs(baseUrl: string) {
+  const url = new URL("listjobs.json", baseUrl);
+  const response = await request({ url });
+  const data: {
+    running: RunningJob[];
+    pending: PendingJob[];
+    finished: FinishedJob[];
+  } = await response.json();
+  return data;
 }

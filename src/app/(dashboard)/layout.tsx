@@ -1,42 +1,99 @@
-import Menu from "@/components/Menu";
-import {
-  ServerStackIcon,
-  ListBulletIcon,
-  BugAntIcon,
-} from "@heroicons/react/24/outline";
-import { headers } from "next/headers";
+"use client";
 
-const menuItems = [
-  { label: "Nodes", link: "/nodes", icon: <ServerStackIcon /> },
-  { label: "Jobs", link: "/jobs", icon: <ListBulletIcon /> },
-  { label: "Spiders", link: "/spiders", icon: <BugAntIcon /> },
-];
+import { getAllNodes, Node } from "@/db";
+import { useEffect, useMemo, useState } from "react";
+import { NodeContext } from "@/components/node-provider";
+import { NodeSelect } from "@/components/select-node";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { NodeFormDialog } from "@/components/node-form-dialog";
+import { HeaderNav } from "@/components/header-nav";
+import Link from "next/link";
 
 export default function DashBoardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = headers();
-  const pathname = headersList.get("x-pathname");
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [selectedUrl, setSelectedUrl] = useState("");
+  const [nodesLoading, setNodesLoading] = useState(true);
+  async function fetchNodes() {
+    setNodesLoading(true);
+    try {
+      const nodes = await getAllNodes();
+      setNodes(nodes);
+      return nodes;
+    } finally {
+      setNodesLoading(false);
+    }
+  }
+  useEffect(() => {
+    (async () => {
+      const nodes = await fetchNodes();
 
+      const stored = localStorage.getItem("currentNodeUrl");
+      const storedNode = nodes.find((n) => n.url === stored);
+      if (storedNode) {
+        setSelectedUrl(storedNode.url);
+      } else if (nodes.length) {
+        setSelectedUrl(nodes[0].url);
+      }
+    })();
+  }, []);
+
+  const [openDialog, setOpenDialog] = useState(false);
   return (
-    <div className="flex h-screen">
-      <aside className="flex h-full min-w-64 flex-col border-r border-r-secondary p-4 pt-0 *:grow first:*:grow-0">
-        <h1 className="py-6 text-center text-4xl font-semibold">ScrapyUI</h1>
-        <Menu>
-          {menuItems.map((item, index) => (
-            <Menu.Item
-              key={index}
-              label={item.label}
-              icon={item.icon}
-              link={item.link}
-              active={pathname === item.link}
-            />
-          ))}
-        </Menu>
-      </aside>
-      <main className="flex-grow overflow-y-scroll px-8">{children}</main>
+    <div>
+      {/* header */}
+      <header className="sticky top-0 z-50 flex h-16 w-full items-center border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/30">
+        <h1 className="text-base font-bold">
+          <Link href="/">ScrapyUI</Link>
+        </h1>
+
+        {/* nav */}
+        <div className="mx-6">
+          <HeaderNav />
+        </div>
+
+        {/* selecting node */}
+        <div className="ml-auto flex items-center space-x-4">
+          <NodeSelect
+            nodes={nodes}
+            loading={nodesLoading}
+            value={selectedUrl}
+            onValueChange={(value) => {
+              setSelectedUrl(value);
+              localStorage.setItem("currentNodeUrl", value);
+            }}
+            onAddNode={() => {
+              setOpenDialog(true);
+            }}
+          />
+
+          {/* tools */}
+          <ThemeToggle />
+        </div>
+      </header>
+
+      {/* main */}
+      <NodeContext.Provider
+        value={useMemo(() => {
+          if (selectedUrl) {
+            const node = nodes.find((n) => n.url === selectedUrl);
+            return node || null;
+          }
+          return null;
+        }, [nodes, selectedUrl])}
+      >
+        <main className="px-8 pb-8 pt-6">{children}</main>
+      </NodeContext.Provider>
+
+      {/* adding node */}
+      <NodeFormDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        onAddSuccessful={fetchNodes}
+      />
     </div>
   );
 }
