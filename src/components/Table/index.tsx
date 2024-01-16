@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { ReactNode } from "react";
 
 interface Column<T> {
@@ -9,9 +10,11 @@ interface Column<T> {
 function Table<T extends Record<string, any>>({
   columns,
   data,
+  ...props
 }: {
   data: Array<T>;
   columns: Column<T>[];
+  className?: string;
 }) {
   function renderCellContent(column: Column<T>, row: T) {
     if (column.render) {
@@ -21,7 +24,12 @@ function Table<T extends Record<string, any>>({
   }
 
   return (
-    <table className="border-separate border-spacing-0 rounded-xl border border-secondary">
+    <table
+      className={classNames(
+        props.className,
+        "border-separate border-spacing-0 rounded-xl border border-secondary",
+      )}
+    >
       <thead className="text-left font-semibold">
         <tr className="border border-secondary">
           {columns.map((column, index) => (
