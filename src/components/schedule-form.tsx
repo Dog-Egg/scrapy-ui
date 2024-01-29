@@ -266,7 +266,6 @@ export function ScheduleForm() {
         <FormField
           name="priority"
           render={({ field }) => {
-            console.log(field);
             return (
               <FormItem>
                 <FormLabel>Priority</FormLabel>

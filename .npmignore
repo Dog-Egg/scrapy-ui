@@ -1,0 +1,4 @@
+*
+!.next/standalone/*
+!.next/standalone/.next/**/*
+!migrations/*

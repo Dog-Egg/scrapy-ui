@@ -1,17 +1,18 @@
 {
   "name": "scrapy-ui",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "bin": "./bin/scrapy-ui.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "package": "node scripts/package.js",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.26.4",
     "@heroicons/react": "^2.1.1",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-accordion": "^1.1.2",
@@ -26,9 +27,10 @@
     "@tanstack/react-table": "^8.11.6",
     "better-sqlite3": "^9.2.2",
     "class-variance-authority": "^0.7.0",
-    "classnames": "^2.3.2",
     "clsx": "^2.1.0",
     "dayjs": "^1.11.10",
+    "db-migrate": "^0.11.14",
+    "db-migrate-sqlite3": "^0.5.0",
     "lodash": "^4.17.21",
     "next": "14.0.4",
     "next-themes": "^0.2.1",
@@ -37,6 +39,7 @@
     "react-hook-form": "^7.49.3",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
+    "yargs": "^17.7.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
