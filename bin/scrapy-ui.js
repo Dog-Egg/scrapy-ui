@@ -6,12 +6,15 @@ var DBMigrate = require("db-migrate");
 const path = require("path");
 
 // process.env.PORT = 3010;
+const SCRAPY_UI_DATABASE = path.join(process.cwd(), "scrapy-ui.db");
+
+process.env.SCRAPY_UI_DATABASE = SCRAPY_UI_DATABASE;
 
 var dbm = DBMigrate.getInstance(true, {
   config: {
     prod: {
       driver: "sqlite3",
-      filename: "scrapy-ui.db",
+      filename: SCRAPY_UI_DATABASE,
     },
   },
   cmdOptions: {
