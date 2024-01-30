@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { PropsWithChildren } from "react";
 
 const menu = [
-  // { label: "Node", link: "/settings/node" },
+  { label: "Node", link: "/settings/node" },
   { label: "Projects", link: "/settings/projects" },
 ];
 

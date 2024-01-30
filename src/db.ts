@@ -19,6 +19,10 @@ export async function addNode(data: Node) {
   db.prepare("INSERT INTO nodes (url) VALUES (?)").run(url);
 }
 
+export async function deleteNodeByUrl(url: string) {
+  db.prepare("DELETE FROM nodes WHERE url = ?").run(url);
+}
+
 /**
  * 获取所有节点
  */
