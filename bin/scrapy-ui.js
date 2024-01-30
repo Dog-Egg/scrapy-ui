@@ -28,9 +28,16 @@ yargs(hideBin(process.argv))
     "run",
     "run ScrapyUI web.",
     (yargs) => {
-      return yargs;
+      return yargs.option("port", {
+        describe: "web service port number",
+        type: "number",
+        default: 8600,
+      });
     },
-    () => {
+    (argv) => {
+      // set service port
+      process.env.PORT = argv.port;
+
       dbm.up().then(() => {
         require("../build/standalone/server");
       });

@@ -6,6 +6,12 @@
 npx scrapy-ui@latest run
 ```
 
+服务默认监听 8600 端口。可以使用 `--port` 自定义端口号：
+
+```bash
+npx scrapy-ui@latest run --port 8000
+```
+
 ## 开发环境说明
 
 ### Database
