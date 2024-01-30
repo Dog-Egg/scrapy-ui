@@ -32,7 +32,7 @@ yargs(hideBin(process.argv))
     },
     () => {
       dbm.up().then(() => {
-        require("../.next/standalone/server");
+        require("../build/standalone/server");
       });
     },
   )

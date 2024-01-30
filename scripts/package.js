@@ -14,8 +14,8 @@ builder.stderr.on("data", (data) => {
 builder.on("close", (code) => {
   if (code === 0) {
     fs.cp(
-      ".next/static",
-      ".next/standalone/.next/static",
+      "build/static",
+      "build/standalone/build/static",
       { recursive: true },
       (err) => {
         if (err) {

@@ -1,4 +1,4 @@
 *
-!.next/standalone/*
-!.next/standalone/.next/**/*
+!build/standalone/*
+!build/standalone/build/**/*
 !migrations/*
