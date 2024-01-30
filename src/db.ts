@@ -1,8 +1,9 @@
 "use server";
 
 import Database from "better-sqlite3";
+import path from "path";
 
-const db = new Database("scrapy-ui.db", { verbose: console.log });
+const db = new Database(path.join("scrapy-ui.db"), { verbose: console.log });
 
 export interface Node {
   url: string;
