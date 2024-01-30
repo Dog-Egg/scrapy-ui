@@ -19,8 +19,12 @@ exports.up = function (db, callback) {
     "nodes",
     {
       columns: {
-        id: { type: "int", primaryKey: true, autoIncrement: true },
-        url: "string",
+        id: {
+          type: "int",
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        url: { type: "string", unique: true, notNull: true },
       },
       ifNotExists: true,
     },

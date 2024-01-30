@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { NodeForm } from "@/components/node-form";
+import { NodeForm, NodeFormHandle } from "@/components/node-form";
 import { addNode } from "@/db";
 import { useRef, useState } from "react";
 import Button from "./shorts/button";
@@ -20,7 +20,7 @@ export function NodeFormDialog({
   onAddSuccessful: () => void;
 }) {
   // add form
-  const formRef = useRef<HTMLFormElement>(null);
+  const formRef = useRef<NodeFormHandle>(null);
   const [saveLoading, setSaveLoading] = useState(false);
 
   return (
@@ -37,6 +37,12 @@ export function NodeFormDialog({
               .then(() => {
                 setOpenDialog(false);
                 onAddSuccessful();
+              })
+              .catch((e: Error) => {
+                formRef.current?.setError("url", {
+                  type: "manual",
+                  message: e.message,
+                });
               })
               .finally(() => {
                 setSaveLoading(false);

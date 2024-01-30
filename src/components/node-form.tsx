@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { UseFormSetError, useForm } from "react-hook-form";
 import * as z from "zod";
 import {
   Form,
@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import Input from "./Input";
-import { forwardRef } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 
 const formSchema = z.object({
   url: z.string({ required_error: "URL is required." }).url(),
@@ -21,18 +21,40 @@ interface NodeFormProps {
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
 }
 
-export const NodeForm = forwardRef<HTMLFormElement, NodeFormProps>(function (
+export type NodeFormHandle = Pick<HTMLFormElement, "requestSubmit"> & {
+  setError: UseFormSetError<{
+    url: string;
+  }>;
+};
+
+export const NodeForm = forwardRef<NodeFormHandle, NodeFormProps>(function (
   props: NodeFormProps,
   ref,
 ) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+  const { setError } = form;
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        requestSubmit() {
+          formRef.current?.requestSubmit();
+        },
+        setError,
+      };
+    },
+    [setError],
+  );
 
   return (
     <Form {...form}>
       <form
-        ref={ref}
+        ref={formRef}
         onSubmit={form.handleSubmit(props.onSubmit || (() => {}))}
       >
         <FormField

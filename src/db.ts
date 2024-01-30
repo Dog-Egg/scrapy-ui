@@ -1,33 +1,29 @@
 "use server";
 
+import Database from "better-sqlite3";
+
+const db = new Database("scrapy-ui.db", { verbose: console.log });
+
 export interface Node {
   url: string;
 }
-
-const nodes: Node[] = [
-  { url: "http://127.0.0.1:6800/" },
-  { url: "http://127.0.0.1:6801/" },
-];
 
 /**
  * 添加 Node。
  */
 export async function addNode(data: Node) {
-  nodes.push({ ...data, url: format_url(data.url) });
-}
-
-/**
- * 通过 url 获取 Node。
- */
-export async function getNodeByURL(url: string) {
-  return nodes.find((i) => i.url == format_url(url));
+  const url = format_url(data.url);
+  if (db.prepare("SELECT * FROM nodes WHERE url = ?").get(url)) {
+    throw new Error("Node already exists.");
+  }
+  db.prepare("INSERT INTO nodes (url) VALUES (?)").run(url);
 }
 
 /**
  * 获取所有节点
  */
 export async function getAllNodes() {
-  return nodes;
+  return db.prepare("SELECT * FROM nodes").all() as Node[];
 }
 
 /**
@@ -38,8 +34,4 @@ function format_url(url: string) {
     url = url.concat("/");
   }
   return url;
-}
-
-export async function getEnabledNodes() {
-  return nodes;
 }
