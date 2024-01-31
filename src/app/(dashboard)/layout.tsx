@@ -17,6 +17,14 @@ export default function DashBoardLayout({
   const [nodes, setNodes] = useState<Node[]>([]);
   const [selectedUrl, setSelectedUrl] = useState("");
   const [nodesLoading, setNodesLoading] = useState(true);
+
+  /**
+   * open node adding form.
+   */
+  function openAddForm() {
+    setOpenDialog(true);
+  }
+
   async function fetchNodes() {
     setNodesLoading(true);
     try {
@@ -30,6 +38,11 @@ export default function DashBoardLayout({
   useEffect(() => {
     (async () => {
       const nodes = await fetchNodes();
+      if (!nodes.length) {
+        // 无任何节点时，打开添加表单
+        openAddForm();
+        return;
+      }
 
       const stored = localStorage.getItem("currentNodeUrl");
       const storedNode = nodes.find((n) => n.url === stored);
@@ -66,7 +79,7 @@ export default function DashBoardLayout({
               localStorage.setItem("currentNodeUrl", value);
             }}
             onAddNode={() => {
-              setOpenDialog(true);
+              openAddForm();
             }}
           />
 
