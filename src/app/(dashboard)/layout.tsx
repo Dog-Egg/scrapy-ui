@@ -25,6 +25,11 @@ export default function DashBoardLayout({
     setOpenDialog(true);
   }
 
+  const setCurrentNodeURL = (value: string) => {
+    setSelectedUrl(value);
+    localStorage.setItem("currentNodeUrl", value);
+  };
+
   async function fetchNodes() {
     setNodesLoading(true);
     try {
@@ -43,16 +48,18 @@ export default function DashBoardLayout({
         openAddForm();
         return;
       }
-
-      const stored = localStorage.getItem("currentNodeUrl");
-      const storedNode = nodes.find((n) => n.url === stored);
-      if (storedNode) {
-        setSelectedUrl(storedNode.url);
-      } else if (nodes.length) {
-        setSelectedUrl(nodes[0].url);
-      }
     })();
   }, []);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("currentNodeUrl");
+    const storedNode = nodes.find((n) => n.url === stored);
+    if (storedNode) {
+      setSelectedUrl(storedNode.url);
+    } else if (nodes.length) {
+      setSelectedUrl(nodes[0].url);
+    }
+  }, [nodes]);
 
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -83,8 +90,7 @@ export default function DashBoardLayout({
             loading={nodesLoading}
             value={selectedUrl}
             onValueChange={(value) => {
-              setSelectedUrl(value);
-              localStorage.setItem("currentNodeUrl", value);
+              setCurrentNodeURL(value);
             }}
             onAddNode={() => {
               openAddForm();
@@ -116,7 +122,11 @@ export default function DashBoardLayout({
       <NodeFormDialog
         open={openDialog}
         setOpen={setOpenDialog}
-        onAddSuccessful={fetchNodes}
+        onAddSuccessful={(node) => {
+          fetchNodes().then(() => {
+            setCurrentNodeURL(node.url);
+          });
+        }}
       />
     </div>
   );

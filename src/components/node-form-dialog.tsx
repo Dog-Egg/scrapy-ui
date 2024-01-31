@@ -9,6 +9,7 @@ import { NodeForm, NodeFormHandle } from "@/components/node-form";
 import { addNode } from "@/db";
 import { useRef, useState } from "react";
 import Button from "./shorts/button";
+import type { Node } from "@/db";
 
 export function NodeFormDialog({
   open: openDialog,
@@ -17,7 +18,7 @@ export function NodeFormDialog({
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onAddSuccessful: () => void;
+  onAddSuccessful: (node: Node) => void;
 }) {
   // add form
   const formRef = useRef<NodeFormHandle>(null);
@@ -34,9 +35,9 @@ export function NodeFormDialog({
           onSubmit={(values) => {
             setSaveLoading(true);
             addNode(values)
-              .then(() => {
+              .then((node) => {
                 setOpenDialog(false);
-                onAddSuccessful();
+                onAddSuccessful(node);
               })
               .catch((e: Error) => {
                 formRef.current?.setError("url", {

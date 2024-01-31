@@ -14,12 +14,13 @@ export interface Node {
 /**
  * 添加 Node。
  */
-export async function addNode(data: Node) {
+export async function addNode(data: Node): Promise<Node> {
   const url = format_url(data.url);
   if (db.prepare("SELECT * FROM nodes WHERE url = ?").get(url)) {
     throw new Error("Node already exists.");
   }
   db.prepare("INSERT INTO nodes (url) VALUES (?)").run(url);
+  return { url };
 }
 
 export async function deleteNodeByUrl(url: string) {
