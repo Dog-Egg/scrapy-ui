@@ -19,6 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { ScheduleFormDialog } from "./schedule-form-dialog";
 import {
   DotsHorizontalIcon,
   CaretSortIcon,
@@ -242,12 +243,15 @@ export default function JobTable() {
 
   return (
     <div className="space-y-4">
-      <div>
+      <div className="flex justify-between space-x-4">
         <Input
           className="w-[15rem]"
           placeholder="Filter jobs..."
           onChange={(e) => setSearchValue(e.target.value)}
-        ></Input>
+        />
+        <ScheduleFormDialog>
+          <Button>Create a Job</Button>
+        </ScheduleFormDialog>
       </div>
       <DataTable
         data={filterTableData(tableData || [])}
