@@ -55,8 +55,16 @@ export default function DashBoardLayout({
   }, []);
 
   const [openDialog, setOpenDialog] = useState(false);
+
+  const currentNode = useMemo(() => {
+    if (selectedUrl) {
+      const node = nodes.find((n) => n.url === selectedUrl);
+      return node || null;
+    }
+    return null;
+  }, [nodes, selectedUrl]);
   return (
-    <div>
+    <div className="flex min-h-screen flex-col">
       {/* header */}
       <header className="sticky top-0 z-50 flex h-16 w-full items-center border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/30">
         <h1 className="text-base font-bold">
@@ -89,17 +97,20 @@ export default function DashBoardLayout({
       </header>
 
       {/* main */}
-      <NodeContext.Provider
-        value={useMemo(() => {
-          if (selectedUrl) {
-            const node = nodes.find((n) => n.url === selectedUrl);
-            return node || null;
-          }
-          return null;
-        }, [nodes, selectedUrl])}
-      >
-        <main className="px-8 pb-8 pt-6">{children}</main>
-      </NodeContext.Provider>
+      {currentNode ? (
+        <NodeContext.Provider value={currentNode}>
+          <main className="px-8 pb-8 pt-6">{children}</main>
+        </NodeContext.Provider>
+      ) : (
+        <div className="m-auto text-center">
+          <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Welcome to ScrapyUI
+          </h2>
+          <p className="leading-7 [&:not(:first-child)]:mt-6">
+            Please select a node first.
+          </p>
+        </div>
+      )}
 
       {/* adding node */}
       <NodeFormDialog
