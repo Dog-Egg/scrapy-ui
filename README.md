@@ -19,7 +19,7 @@ npx scrapy-ui@latest run --port 8000
 首次启动该项目前，需要执行以下命令来初始化开发环境数据库：
 
 ```bash
-npx db-migrate up
+npx scrapy-ui migrate
 ```
 
 ### Scrapyd 服务
