@@ -1,10 +1,11 @@
 "use server";
 
 import Database from "better-sqlite3";
+import { ReturnValue, returnValue } from "./utils/action-helper";
 
 const filename = process.env.SCRAPY_UI_DATABASE || "scrapy-ui.db";
 const db = new Database(filename, {
-  verbose: console.log,
+  verbose: process.env.NODE_ENV == "development" ? console.log : undefined,
 });
 
 export interface Node {
@@ -14,13 +15,13 @@ export interface Node {
 /**
  * 添加 Node。
  */
-export async function addNode(data: Node): Promise<Node> {
+export async function addNode(data: Node): Promise<ReturnValue<Node>> {
   const url = format_url(data.url);
   if (db.prepare("SELECT * FROM nodes WHERE url = ?").get(url)) {
-    throw new Error("Node already exists.");
+    return returnValue.err({ message: "Node already exists." });
   }
   db.prepare("INSERT INTO nodes (url) VALUES (?)").run(url);
-  return { url };
+  return returnValue.ok({ url });
 }
 
 export async function deleteNodeByUrl(url: string) {

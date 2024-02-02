@@ -35,15 +35,16 @@ export function NodeFormDialog({
           onSubmit={(values) => {
             setSaveLoading(true);
             addNode(values)
-              .then((node) => {
-                setOpenDialog(false);
-                onAddSuccessful(node);
-              })
-              .catch((e: Error) => {
-                formRef.current?.setError("url", {
-                  type: "manual",
-                  message: e.message,
-                });
+              .then((res) => {
+                if (res.ok) {
+                  setOpenDialog(false);
+                  onAddSuccessful(res.data);
+                } else {
+                  formRef.current?.setError("url", {
+                    type: "manual",
+                    message: res.message,
+                  });
+                }
               })
               .finally(() => {
                 setSaveLoading(false);

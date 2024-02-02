@@ -24,14 +24,10 @@ const Button = forwardRef<HTMLButtonElement, Props>(function (
       ) : (
         <>
           {/* icon */}
-          {loading ? (
-            <ReloadIcon
-              className={cn("h-4 w-4 animate-spin", children && "mr-2")}
-            />
-          ) : (
-            icon &&
-            cloneElement(icon, { className: cn("h-4 w-4", children && "mr-2") })
-          )}
+          {icon &&
+            cloneElement(icon, {
+              className: cn("h-4 w-4", children && "mr-2"),
+            })}
 
           {/* children */}
           {children}

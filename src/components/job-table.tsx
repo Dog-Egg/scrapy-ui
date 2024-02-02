@@ -205,7 +205,13 @@ export default function JobTable() {
   const fetchTableDatas = useCallback(
     function () {
       if (currentNode)
-        listjobs(currentNode?.url).then((data) => {
+        listjobs(currentNode?.url).then((res) => {
+          if (!res.ok) {
+            // TODO show error
+            return;
+          }
+
+          const data = res.data;
           const formatedData: Job[] = [];
           data.running.forEach((item) => {
             formatedData.push({

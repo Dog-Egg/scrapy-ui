@@ -1,5 +1,6 @@
 "use server";
 
+import { returnValue } from "./utils/action-helper";
 import { request } from "./utils/request";
 
 /**
@@ -138,11 +139,16 @@ export type FinishedJob = RunningJob & {
 
 export async function listjobs(baseUrl: string) {
   const url = new URL("listjobs.json", baseUrl);
-  const response = await request({ url });
+  let response;
+  try {
+    response = await request({ url });
+  } catch {
+    return returnValue.err();
+  }
   const data: {
     running: RunningJob[];
     pending: PendingJob[];
     finished: FinishedJob[];
   } = await response.json();
-  return data;
+  return returnValue.ok(data);
 }
