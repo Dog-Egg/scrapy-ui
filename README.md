@@ -1,47 +1,29 @@
-# Scrapy UI
+# ScrapyUI
 
-## 安装运行
+## Running
+
+### via `npx`
+
+This project uses [Node](https://nodejs.org/) as its runtime, so you can start service with `npx`.
 
 ```bash
 npx scrapy-ui@latest run
 ```
 
-服务默认监听 8600 端口。可以使用 `--port` 自定义端口号：
+By default, the service listens to port 8600. You can use `--port` to customize the port.
 
 ```bash
 npx scrapy-ui@latest run --port 8000
 ```
 
-## 开发环境说明
-
-### Database
-
-首次启动该项目前，需要执行以下命令来初始化开发环境数据库：
+### via Docker
 
 ```bash
-npx scrapy-ui migrate
+docker run -p 8600:8600 -d dogegg/scrapy-ui
 ```
 
-### Scrapyd 服务
-
-使用下列命令将运行一个 Scrapyd 服务，并且会向该服务上传一个 Scrapy 爬虫项目：
+Replace the `<hostpath>` below to save the database on the host.
 
 ```bash
-cd example/
-
-docker compose up
-```
-
-如需重新上传爬虫项目，可使用以下命令：
-
-```bash
-cd example/
-
-docker compose up scrapy-deploy
-```
-
-### UI 组件开发
-
-```bash
-npm run storybook
+docker run -p 8600:8600 --volume=<hostpath>:/data -d dogegg/scrapy-ui
 ```
