@@ -142,6 +142,7 @@ export type RunningJob = PendingJob & {
 export type FinishedJob = RunningJob & {
   end_time: string;
   log_url: string;
+  items_url?: string;
 };
 
 export async function listjobs(baseUrl: string) {

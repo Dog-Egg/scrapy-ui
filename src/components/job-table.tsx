@@ -181,16 +181,34 @@ export default function JobTable() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 {row.original.stage === "finished" && (
-                  <DropdownMenuItem
-                    onClick={() => {
-                      if (row.original.stage === "finished")
-                        window.open(
-                          new URL(row.original.log_url, currentNode?.url),
-                        );
-                    }}
-                  >
-                    View Log
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        if (row.original.stage === "finished")
+                          window.open(
+                            new URL(row.original.log_url, currentNode?.url),
+                          );
+                      }}
+                    >
+                      View Log
+                    </DropdownMenuItem>
+                    {row.original.items_url && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          if (
+                            row.original.stage === "finished" &&
+                            row.original.items_url
+                          ) {
+                            window.open(
+                              new URL(row.original.items_url, currentNode?.url),
+                            );
+                          }
+                        }}
+                      >
+                        View Items
+                      </DropdownMenuItem>
+                    )}
+                  </>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>

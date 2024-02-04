@@ -6,5 +6,5 @@ class BlogSpider(scrapy.Spider):
     start_urls = ["https://www.zyte.com/blog/"]
 
     def parse(self, response):
-        for title in response.css(".oxy-post-title"):
-            yield {"title": title.css("::text").get()}
+        for title in response.xpath("//title/text()"):
+            yield {"title": str(title)}
