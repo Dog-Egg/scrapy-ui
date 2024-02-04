@@ -240,7 +240,7 @@ export default function JobTable() {
     [currentNode],
   );
   useEffect(() => {
-    const poller = new Poller(fetchTableDatas, { interval: 1500 });
+    const poller = new Poller(fetchTableDatas, { interval: 5000 });
     poller.start();
     return () => {
       poller.stop();

@@ -35,7 +35,7 @@ export function NodeSelect({
       }}
     >
       <SelectTrigger className="w-[12rem]">
-        <div className="flex items-center">
+        <div className="flex items-center overflow-hidden [&>span]:overflow-hidden [&>span]:text-ellipsis">
           {loading ? (
             <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
           ) : (
