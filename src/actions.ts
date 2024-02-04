@@ -1,7 +1,6 @@
 "use server";
 
 import { returnValue } from "./utils/action-helper";
-import { request } from "./utils/request";
 
 /**
  * Get the list of projects uploaded to this Scrapy server.
@@ -10,7 +9,7 @@ export async function listprojects(baseURL: string) {
   // Example response: {"status": "ok", "projects": ["myproject", "otherproject"]}
   const url = new URL("listprojects.json", baseURL);
   try {
-    const response = await request({ url });
+    const response = await request(url);
     const data = await response.json();
     return data.projects as Array<string>;
   } catch {
@@ -19,9 +18,8 @@ export async function listprojects(baseURL: string) {
 }
 
 export async function listversions(baseURL: string, project: string) {
-  const response = await request({
-    url: new URL(`listversions.json?project=${project}`, baseURL),
-  });
+  const url = new URL(`listversions.json?project=${project}`, baseURL);
+  const response = await request(url);
   const data = await response.json();
   return data.versions as string[];
 }
@@ -35,7 +33,7 @@ export async function listspiders(
   if (version) {
     url.searchParams.set("_version", version);
   }
-  const response = await request({ url });
+  const response = await request(url);
   const data = await response.json();
   if (data.status === "error") {
     if ((data.message as string).includes("no active project")) {
@@ -53,7 +51,7 @@ export async function delproject(baseURL: string, project: string) {
   const form = new FormData();
   form.append("project", project);
 
-  const response = await request({ url, method: "post", data: form });
+  const response = await request(url, { method: "post", body: form });
   const data = await response.json();
   if (data["status"] !== "ok") {
     throw Error(JSON.stringify(data));
@@ -69,7 +67,7 @@ export async function delversion(
   const formdata = new FormData();
   formdata.append("project", project);
   formdata.append("version", version);
-  const response = await request({ url, method: "post", data: formdata });
+  const response = await request(url, { method: "post", body: formdata });
   const data = await response.json();
   if (data["status"] !== "ok") {
     throw Error(JSON.stringify(data));
@@ -103,16 +101,25 @@ export async function schedule(
       formdata.append(k, v);
     }
 
-  const response = await request({ url, method: "post", data: formdata });
+  const response = await request(url, { method: "post", body: formdata });
   const data = await response.json();
   if (data.status !== "ok") {
     throw Error(JSON.stringify(data));
   }
 }
 
-export async function daemonstatus(baseUrl: string) {
+export async function daemonstatus(baseUrl: string, timeout?: number) {
   const url = new URL("daemonstatus.json", baseUrl);
-  const response = await request({ url });
+
+  const controller = new AbortController();
+  const t = setTimeout(() => {
+    controller.abort();
+  }, timeout);
+  const response = await request(url, { signal: controller.signal }).finally(
+    () => {
+      clearTimeout(t);
+    },
+  );
   const data: {
     running: number;
     pending: number;
@@ -141,7 +148,7 @@ export async function listjobs(baseUrl: string) {
   const url = new URL("listjobs.json", baseUrl);
   let response;
   try {
-    response = await request({ url });
+    response = await request(url);
   } catch {
     return returnValue.err();
   }
@@ -151,4 +158,11 @@ export async function listjobs(baseUrl: string) {
     finished: FinishedJob[];
   } = await response.json();
   return returnValue.ok(data);
+}
+
+async function request(url: string | URL, init?: RequestInit) {
+  return await fetch(url, {
+    cache: "no-store",
+    ...init,
+  });
 }

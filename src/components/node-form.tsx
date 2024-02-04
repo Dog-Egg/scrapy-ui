@@ -103,7 +103,7 @@ export const NodeForm = forwardRef<NodeFormHandle, NodeFormProps>(function (
               setTestLoading(true);
               setTestResult("none");
               try {
-                await daemonstatus(watchUrl);
+                await daemonstatus(watchUrl, 1500);
                 setTestResult("success");
               } catch {
                 setTestResult("failure");
@@ -122,7 +122,7 @@ export const NodeForm = forwardRef<NodeFormHandle, NodeFormProps>(function (
             {testResult == "success" && (
               <>
                 Connection successful
-                <CheckIcon className="text-success ml-1 h-4 w-4" />
+                <CheckIcon className="ml-1 h-4 w-4 text-success" />
               </>
             )}
             {testResult == "failure" && (
