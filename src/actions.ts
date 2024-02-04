@@ -94,7 +94,7 @@ export async function schedule(
   options?.priority && formdata.append("priority", options.priority.toString());
   if (options?.settings)
     for (const [k, v] of Object.entries(options.settings)) {
-      formdata.append(k, v);
+      formdata.append("setting", `${k}=${v}`);
     }
   if (options?.arguments)
     for (const [k, v] of Object.entries(options.arguments)) {
