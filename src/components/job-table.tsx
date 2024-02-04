@@ -40,6 +40,7 @@ import {
 } from "@radix-ui/react-icons";
 import calendar from "dayjs/plugin/calendar";
 import { useToast } from "./ui/use-toast";
+import { Timer } from "./timer";
 
 dayjs.extend(utc);
 dayjs.extend(calendar);
@@ -155,25 +156,15 @@ export default function JobTable() {
           return "Elapsed";
         },
         cell({ row }) {
-          if (row.original.stage !== "finished") return;
-          const seconds =
-            dayjs(row.original.end_time).diff(dayjs(row.original.start_time)) /
-            1000;
-          const units: [string, number][] = [
-            ["h", 60 * 60],
-            ["m", 60],
-            ["s", 1],
-          ];
-          const parts = [];
-          let t = seconds;
-          for (const [unit, n] of units) {
-            if (t > n) {
-              const floor = Math.floor(t / n);
-              parts.push(floor + unit);
-              t -= floor * n;
-            }
-          }
-          return <span className="ml-5">{parts.join(" ")}</span>;
+          const { stage } = row.original;
+          if (stage === "pending") return;
+          return (
+            <Timer
+              // className="ml-5"
+              startTime={row.original.start_time}
+              endTime={stage === "finished" ? row.original.end_time : undefined}
+            />
+          );
         },
       },
       {
