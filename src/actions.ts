@@ -161,6 +161,15 @@ export async function listjobs(baseUrl: string) {
   return returnValue.ok(data);
 }
 
+export async function cancel(baseUrl: string, project: string, jobId: string) {
+  const url = new URL("cancel.json", baseUrl);
+  const form = new FormData();
+  form.append("project", project);
+  form.append("job", jobId);
+  const response = await request(url, { method: "post", body: form });
+  return (await response.json()) as { prevstate: "running" | "pending" };
+}
+
 async function request(url: string | URL, init?: RequestInit) {
   return await fetch(url, {
     cache: "no-store",

@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DataTable } from "./data-table";
-import { FinishedJob, PendingJob, RunningJob, listjobs } from "@/actions";
+import {
+  FinishedJob,
+  PendingJob,
+  RunningJob,
+  cancel,
+  listjobs,
+} from "@/actions";
 import { Poller } from "@/lib/poller";
 import { useCurrentNode } from "./node-provider";
 import { ColumnDef } from "@tanstack/react-table";
@@ -33,6 +39,7 @@ import {
   LapTimerIcon,
 } from "@radix-ui/react-icons";
 import calendar from "dayjs/plugin/calendar";
+import { useToast } from "./ui/use-toast";
 
 dayjs.extend(utc);
 dayjs.extend(calendar);
@@ -70,6 +77,8 @@ export default function JobTable() {
       }
     });
   }
+
+  const { toast } = useToast();
 
   const columns: ColumnDef<Job>[] = useMemo(() => {
     return [
@@ -180,6 +189,28 @@ export default function JobTable() {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                {(row.original.stage == "pending" ||
+                  row.original.stage == "running") && (
+                  <>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        const { project, id } = row.original;
+                        if (currentNode) {
+                          cancel(currentNode?.url, project, id).then(
+                            ({ prevstate }) => {
+                              toast({
+                                title: "The job was successfully cancelled.",
+                                description: `prevstate: "${prevstate}"`,
+                              });
+                            },
+                          );
+                        }
+                      }}
+                    >
+                      Cancel Job
+                    </DropdownMenuItem>
+                  </>
+                )}
                 {row.original.stage === "finished" && (
                   <>
                     <DropdownMenuItem
