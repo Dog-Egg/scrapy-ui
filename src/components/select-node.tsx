@@ -39,7 +39,7 @@ export function NodeSelect({
           {loading ? (
             <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
           ) : (
-            <ServerStackIcon className="mr-2 h-5 w-5" />
+            <ServerStackIcon className="mr-2 h-5 w-5 flex-shrink-0" />
           )}
           <SelectValue placeholder="Select a node" />
         </div>
