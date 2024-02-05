@@ -176,3 +176,15 @@ async function request(url: string | URL, init?: RequestInit) {
     ...init,
   });
 }
+
+export async function viewLog(baseUrl: string, logUrl: string) {
+  const url = new URL(logUrl, baseUrl);
+  const response = await request(url);
+  return await response.text();
+}
+
+export async function viewItems(baseUrl: string, itemsUrl: string) {
+  const url = new URL(itemsUrl, baseUrl);
+  const response = await request(url);
+  return await response.text();
+}

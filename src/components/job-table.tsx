@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DataTable } from "./data-table";
 import {
   FinishedJob,
@@ -8,6 +8,8 @@ import {
   RunningJob,
   cancel,
   listjobs,
+  viewItems,
+  viewLog,
 } from "@/actions";
 import { Poller } from "@/lib/poller";
 import { useCurrentNode } from "./node-provider";
@@ -41,6 +43,10 @@ import {
 import calendar from "dayjs/plugin/calendar";
 import { useToast } from "./ui/use-toast";
 import { Timer } from "./timer";
+import {
+  FileContentViewer,
+  FileContentViewerHandle,
+} from "./file-content-viewer";
 
 dayjs.extend(utc);
 dayjs.extend(calendar);
@@ -206,10 +212,15 @@ export default function JobTable() {
                   <>
                     <DropdownMenuItem
                       onClick={() => {
-                        if (row.original.stage === "finished")
-                          window.open(
-                            new URL(row.original.log_url, currentNode?.url),
+                        if (row.original.stage === "finished" && currentNode) {
+                          viewLog(currentNode?.url, row.original.log_url).then(
+                            (content) =>
+                              fileContentViewerRef.current?.render({
+                                title: "Log",
+                                content: content,
+                              }),
                           );
+                        }
                       }}
                     >
                       View Log
@@ -219,11 +230,18 @@ export default function JobTable() {
                         onClick={() => {
                           if (
                             row.original.stage === "finished" &&
-                            row.original.items_url
+                            row.original.items_url &&
+                            currentNode
                           ) {
-                            window.open(
-                              new URL(row.original.items_url, currentNode?.url),
-                            );
+                            viewItems(
+                              currentNode?.url,
+                              row.original.items_url,
+                            ).then((content) => {
+                              fileContentViewerRef.current?.render({
+                                title: "Items",
+                                content,
+                              });
+                            });
                           }
                         }}
                       >
@@ -238,7 +256,7 @@ export default function JobTable() {
         },
       },
     ];
-  }, [searchValue, currentNode]);
+  }, [searchValue, currentNode, toast]);
 
   // tables
   const [tableData, setTableData] = useState<Job[]>([]);
@@ -287,6 +305,8 @@ export default function JobTable() {
     };
   }, [fetchTableDatas]);
 
+  const fileContentViewerRef = useRef<FileContentViewerHandle>(null);
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between space-x-4">
@@ -304,6 +324,7 @@ export default function JobTable() {
         columns={columns}
         initialSortingState={[{ id: "startTime", desc: true }]}
       />
+      <FileContentViewer ref={fileContentViewerRef} />
     </div>
   );
 }
