@@ -23,14 +23,27 @@ export const FileContentViewer = forwardRef<FileContentViewerHandle>(function (
     };
   });
 
+  const lines = content.split("\n");
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-[90vw]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <div className="max-h-[80vh] overflow-scroll text-xs">
-          <pre>{content}</pre>
+        <div className="max-h-[80vh] overflow-y-scroll text-sm">
+          <ol className="list-decimal space-y-1 marker:text-muted-foreground">
+            {lines.map((line, index) => (
+              <li
+                key={index}
+                style={{
+                  marginLeft: lines.length.toString().length + "em",
+                }}
+              >
+                {line}
+              </li>
+            ))}
+          </ol>
         </div>
       </DialogContent>
     </Dialog>
