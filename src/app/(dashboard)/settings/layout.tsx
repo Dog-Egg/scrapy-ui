@@ -8,6 +8,7 @@ import { PropsWithChildren } from "react";
 const menu = [
   { label: "Node", link: "/settings/node" },
   { label: "Projects", link: "/settings/projects" },
+  { label: "Upload Project", link: "/settings/upload" },
 ];
 
 export default function Layout({ children }: PropsWithChildren) {

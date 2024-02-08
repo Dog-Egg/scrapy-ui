@@ -188,3 +188,13 @@ export async function viewItems(baseUrl: string, itemsUrl: string) {
   const response = await request(url);
   return await response.text();
 }
+
+export async function addVersion(baseUrl: string, body: FormData) {
+  const url = new URL("addversion.json", baseUrl);
+  const response = await request(url, { method: "post", body });
+  const data = await response.json();
+  if (data.status == "ok") {
+    return returnValue.ok();
+  }
+  return returnValue.err({ message: data.message });
+}
