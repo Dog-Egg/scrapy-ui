@@ -1,6 +1,6 @@
 "use client";
 
-import { listprojects } from "@/actions";
+import { listprojects } from "@/client/scrapyd-api";
 import {
   Select,
   SelectContent,

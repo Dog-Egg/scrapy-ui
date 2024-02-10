@@ -2,15 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DataTable } from "./data-table";
-import {
+import type {
   FinishedJob,
   PendingJob,
   RunningJob,
-  cancel,
-  listjobs,
-  viewItems,
-  viewLog,
-} from "@/actions";
+} from "@/actions/scrapyd-api";
+import { cancel, viewItems, viewLog } from "@/client/scrapyd-api";
+import { listjobs } from "@/client/scrapyd-api";
 import { Poller } from "@/lib/poller";
 import { useCurrentNode } from "./node-provider";
 import { ColumnDef } from "@tanstack/react-table";
@@ -263,13 +261,7 @@ export default function JobTable() {
   const fetchTableDatas = useCallback(
     function () {
       if (currentNode)
-        listjobs(currentNode?.url).then((res) => {
-          if (!res.ok) {
-            // TODO show error
-            return;
-          }
-
-          const data = res.data;
+        listjobs(currentNode?.url).then((data) => {
           const formatedData: Job[] = [];
           data.running.forEach((item) => {
             formatedData.push({

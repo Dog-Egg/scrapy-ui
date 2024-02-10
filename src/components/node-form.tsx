@@ -19,8 +19,9 @@ import {
   useState,
 } from "react";
 import Button from "./shorts/button";
-import { daemonstatus } from "@/actions";
+import { daemonstatus } from "@/actions/scrapyd-api";
 import { CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
+import { Code } from "@/utils/enum";
 
 const formSchema = z.object({
   url: z.string({ required_error: "URL is required." }).url(),
@@ -99,17 +100,20 @@ export const NodeForm = forwardRef<NodeFormHandle, NodeFormProps>(function (
             loading={testLoading}
             variant="outline"
             size="sm"
-            onClick={async () => {
+            onClick={() => {
               setTestLoading(true);
               setTestResult("none");
-              try {
-                await daemonstatus(watchUrl, 1500);
-                setTestResult("success");
-              } catch {
-                setTestResult("failure");
-              } finally {
-                setTestLoading(false);
-              }
+              daemonstatus(watchUrl, 1500)
+                .then((res) => {
+                  if (res.code === Code.OK) {
+                    setTestResult("success");
+                  } else {
+                    setTestResult("failure");
+                  }
+                })
+                .finally(() => {
+                  setTestLoading(false);
+                });
             }}
           >
             Test Connection

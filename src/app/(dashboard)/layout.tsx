@@ -8,6 +8,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { NodeFormDialog } from "@/components/node-form-dialog";
 import { HeaderNav } from "@/components/header-nav";
 import Link from "next/link";
+import { ErrorView } from "@/components/error-view";
+import { usePathname } from "next/navigation";
 
 export default function DashBoardLayout({
   children,
@@ -70,6 +72,8 @@ export default function DashBoardLayout({
     }
     return null;
   }, [nodes, selectedUrl]);
+
+  const pathname = usePathname();
   return (
     <div className="flex min-h-screen flex-col">
       {/* header */}
@@ -105,7 +109,10 @@ export default function DashBoardLayout({
       {/* main */}
       {currentNode ? (
         <NodeContext.Provider value={currentNode}>
-          <main className="px-8 pb-8 pt-6">{children}</main>
+          {/* 节点变更或路径变更时重置错误页面 */}
+          <ErrorView key={pathname + currentNode.url}>
+            <main className="px-8 pb-8 pt-6">{children}</main>
+          </ErrorView>
         </NodeContext.Provider>
       ) : (
         <div className="m-auto text-center">

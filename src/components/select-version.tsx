@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { listversions } from "@/actions";
+import { listversions } from "@/client/scrapyd-api";
 import { useCurrentNode } from "./node-provider";
 
 export function VersionSelect({

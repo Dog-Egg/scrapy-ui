@@ -1,30 +1,36 @@
 "use server";
 
-import { returnValue } from "./utils/action-helper";
+import { Code } from "@/utils/enum";
+
+export type ResultType<T> =
+  | {
+      code: Code.OK;
+      data: T;
+    }
+  | { code: Code.FETCH_FAILED };
 
 /**
  * Get the list of projects uploaded to this Scrapy server.
  */
-export async function listprojects(baseURL: string) {
+export const listprojects = wrap(async function (baseUrl: string) {
   // Example response: {"status": "ok", "projects": ["myproject", "otherproject"]}
-  const url = new URL("listprojects.json", baseURL);
-  try {
-    const response = await request(url);
-    const data = await response.json();
-    return data.projects as Array<string>;
-  } catch {
-    throw new Error("Node request failed.");
-  }
-}
+  const url = new URL("listprojects.json", baseUrl);
+  const response = await request(url);
+  const data = await response.json();
+  return data.projects as Array<string>;
+});
 
-export async function listversions(baseURL: string, project: string) {
+export const listversions = wrap(async function (
+  baseURL: string,
+  project: string,
+) {
   const url = new URL(`listversions.json?project=${project}`, baseURL);
   const response = await request(url);
   const data = await response.json();
   return data.versions as string[];
-}
+});
 
-export async function listspiders(
+export const listspiders = wrap(async function (
   baseURL: string,
   project: string,
   version?: string,
@@ -43,9 +49,12 @@ export async function listspiders(
     }
   }
   return data.spiders as string[];
-}
+});
 
-export async function delproject(baseURL: string, project: string) {
+export const delproject = wrap(async function delproject(
+  baseURL: string,
+  project: string,
+) {
   const url = new URL(`delproject.json`, baseURL);
 
   const form = new FormData();
@@ -53,12 +62,9 @@ export async function delproject(baseURL: string, project: string) {
 
   const response = await request(url, { method: "post", body: form });
   const data = await response.json();
-  if (data["status"] !== "ok") {
-    throw Error(JSON.stringify(data));
-  }
-}
+});
 
-export async function delversion(
+export const delversion = wrap(async function (
   baseURL: string,
   project: string,
   version: string,
@@ -72,9 +78,9 @@ export async function delversion(
   if (data["status"] !== "ok") {
     throw Error(JSON.stringify(data));
   }
-}
+});
 
-export async function schedule(
+export const schedule = wrap(async function (
   baseURL: string,
   project: string,
   spider: string,
@@ -106,9 +112,12 @@ export async function schedule(
   if (data.status !== "ok") {
     throw Error(JSON.stringify(data));
   }
-}
+});
 
-export async function daemonstatus(baseUrl: string, timeout?: number) {
+export const daemonstatus = wrap(async function (
+  baseUrl: string,
+  timeout?: number,
+) {
   const url = new URL("daemonstatus.json", baseUrl);
 
   const controller = new AbortController();
@@ -127,7 +136,7 @@ export async function daemonstatus(baseUrl: string, timeout?: number) {
     node_name: string;
   } = await response.json();
   return data;
-}
+});
 
 export type PendingJob = {
   id: string;
@@ -145,56 +154,82 @@ export type FinishedJob = RunningJob & {
   items_url?: string;
 };
 
-export async function listjobs(baseUrl: string) {
+export const listjobs = wrap(async function (baseUrl: string): Promise<{
+  running: RunningJob[];
+  pending: PendingJob[];
+  finished: FinishedJob[];
+}> {
   const url = new URL("listjobs.json", baseUrl);
-  let response;
-  try {
-    response = await request(url);
-  } catch {
-    return returnValue.err();
-  }
-  const data: {
-    running: RunningJob[];
-    pending: PendingJob[];
-    finished: FinishedJob[];
-  } = await response.json();
-  return returnValue.ok(data);
-}
+  const response = await request(url);
+  const data = await response.json();
+  return data;
+});
 
-export async function cancel(baseUrl: string, project: string, jobId: string) {
+export const cancel = wrap(async function (
+  baseUrl: string,
+  project: string,
+  jobId: string,
+) {
   const url = new URL("cancel.json", baseUrl);
   const form = new FormData();
   form.append("project", project);
   form.append("job", jobId);
   const response = await request(url, { method: "post", body: form });
   return (await response.json()) as { prevstate: "running" | "pending" };
-}
+});
+
+class FetchError extends Error {}
 
 async function request(url: string | URL, init?: RequestInit) {
-  return await fetch(url, {
-    cache: "no-store",
-    ...init,
-  });
+  try {
+    return await fetch(url, {
+      cache: "no-store",
+      ...init,
+    });
+  } catch {
+    throw new FetchError();
+  }
 }
 
-export async function viewLog(baseUrl: string, logUrl: string) {
+export const viewLog = wrap(async function (baseUrl: string, logUrl: string) {
   const url = new URL(logUrl, baseUrl);
   const response = await request(url);
   return await response.text();
-}
+});
 
-export async function viewItems(baseUrl: string, itemsUrl: string) {
+export const viewItems = wrap(async function viewItems(
+  baseUrl: string,
+  itemsUrl: string,
+) {
   const url = new URL(itemsUrl, baseUrl);
   const response = await request(url);
   return await response.text();
-}
+});
 
-export async function addVersion(baseUrl: string, body: FormData) {
+export const addversion = wrap(async function addVersion(
+  baseUrl: string,
+  body: FormData,
+) {
   const url = new URL("addversion.json", baseUrl);
   const response = await request(url, { method: "post", body });
   const data = await response.json();
-  if (data.status == "ok") {
-    return returnValue.ok();
-  }
-  return returnValue.err({ message: data.message });
+});
+
+/**高阶函数。负责处理异常，包装为 HTTP 200 的响应结果，避免 client 端调用抛出错误。 */
+function wrap<
+  T extends (...args: any[]) => Promise<P>,
+  P = ReturnType<T> extends Promise<infer S> ? S : unknown,
+>(fn: T) {
+  const wrapper: (...args: Parameters<typeof fn>) => Promise<ResultType<P>> =
+    async function (...args) {
+      try {
+        return { code: Code.OK, data: await fn(...args) };
+      } catch (e) {
+        if (e instanceof FetchError) {
+          return { code: Code.FETCH_FAILED };
+        }
+        throw e;
+      }
+    };
+  return wrapper;
 }

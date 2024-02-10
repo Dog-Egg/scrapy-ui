@@ -1,5 +1,5 @@
 "use client";
-import { addVersion } from "@/actions";
+import { addversion } from "@/client/scrapyd-api";
 import Input from "@/components/Input";
 import { useCurrentNode } from "@/components/node-provider";
 import Button from "@/components/shorts/button";
@@ -43,7 +43,7 @@ export default function Page() {
 
     if (currentNode) {
       setSubmitLoading(true);
-      addVersion(currentNode?.url, body)
+      addversion(currentNode?.url, body)
         .then(() => {
           toast({
             title: "Upload successfully",

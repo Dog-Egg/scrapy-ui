@@ -7,8 +7,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useCurrentNode } from "./node-provider";
-import { listspiders } from "@/actions";
-import { cn } from "@/lib/utils";
+import { listspiders } from "@/client/scrapyd-api";
 
 export function SpiderSelect({
   project,

@@ -20,7 +20,7 @@ import { ProjectSelect } from "./select-project";
 import { VersionSelect } from "./select-version";
 import { useState } from "react";
 import { SpiderSelect } from "./select-spider";
-import { schedule } from "@/actions";
+import { schedule } from "@/client/scrapyd-api";
 import { useCurrentNode } from "./node-provider";
 import { useToast } from "./ui/use-toast";
 
