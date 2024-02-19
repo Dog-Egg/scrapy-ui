@@ -174,6 +174,15 @@ export default function JobTable() {
       {
         id: "actions",
         cell({ row }) {
+          const { stage } = row.original;
+
+          let log_url: string | undefined;
+          let items_url: string | undefined;
+          if (stage === "running" || stage === "finished") {
+            log_url = row.original.log_url;
+            items_url = row.original.items_url;
+          }
+
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -206,47 +215,40 @@ export default function JobTable() {
                     </DropdownMenuItem>
                   </>
                 )}
-                {row.original.stage === "finished" && (
-                  <>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        if (row.original.stage === "finished" && currentNode) {
-                          viewLog(currentNode?.url, row.original.log_url).then(
-                            (content) =>
-                              fileContentViewerRef.current?.render({
-                                title: "Log",
-                                content: content,
-                              }),
-                          );
-                        }
-                      }}
-                    >
-                      View Log
-                    </DropdownMenuItem>
-                    {row.original.items_url && (
-                      <DropdownMenuItem
-                        onClick={() => {
-                          if (
-                            row.original.stage === "finished" &&
-                            row.original.items_url &&
-                            currentNode
-                          ) {
-                            viewItems(
-                              currentNode?.url,
-                              row.original.items_url,
-                            ).then((content) => {
-                              fileContentViewerRef.current?.render({
-                                title: "Items",
-                                content,
-                              });
+                {log_url && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (currentNode && log_url) {
+                        viewLog(currentNode?.url, log_url).then(
+                          (content) =>
+                            fileContentViewerRef.current?.render({
+                              title: "Log",
+                              content: content,
+                            }),
+                        );
+                      }
+                    }}
+                  >
+                    View Log
+                  </DropdownMenuItem>
+                )}
+                {items_url && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (currentNode && items_url) {
+                        viewItems(currentNode?.url, items_url).then(
+                          (content) => {
+                            fileContentViewerRef.current?.render({
+                              title: "Items",
+                              content,
                             });
-                          }
-                        }}
-                      >
-                        View Items
-                      </DropdownMenuItem>
-                    )}
-                  </>
+                          },
+                        );
+                      }
+                    }}
+                  >
+                    View Items
+                  </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>

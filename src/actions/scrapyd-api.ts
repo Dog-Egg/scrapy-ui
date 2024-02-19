@@ -147,6 +147,10 @@ export type PendingJob = {
 
 export type RunningJob = PendingJob & {
   start_time: string;
+
+  /* from fork: https://github.com/Dog-Egg/scrapyd */
+  log_url?: string;
+  items_url?: string;
 };
 
 export type FinishedJob = RunningJob & {
