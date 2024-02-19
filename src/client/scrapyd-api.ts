@@ -2,6 +2,7 @@
 
 import * as actions from "@/actions/scrapyd-api";
 import { setError } from "@/components/error-view";
+import { toast } from "@/components/ui/use-toast";
 import { Code } from "@/utils/enum";
 
 /**
@@ -18,8 +19,16 @@ function unwrap<
         return res.data;
       case Code.FETCH_FAILED:
         setError();
+        throw Error("fetch failed");
+      case Code.SCRAPYD_ERROR:
+        toast({
+          title: "Scrapyd Error",
+          description: res.message,
+          variant: "destructive",
+        });
+        throw Error(`Scrapyd Error: ${res.message}`);
       default:
-        throw Error("some error");
+        throw Error(`not implement for code ${res}.`);
     }
   };
 }
@@ -33,3 +42,4 @@ export const schedule = unwrap(actions.schedule);
 export const viewLog = unwrap(actions.viewLog);
 export const viewItems = unwrap(actions.viewItems);
 export const addversion = unwrap(actions.addversion);
+export const delproject = unwrap(actions.delproject);

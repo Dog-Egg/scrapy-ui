@@ -3,11 +3,9 @@
 import { Code } from "@/utils/enum";
 
 export type ResultType<T> =
-  | {
-      code: Code.OK;
-      data: T;
-    }
-  | { code: Code.FETCH_FAILED };
+  | { code: Code.OK; data: T }
+  | { code: Code.FETCH_FAILED }
+  | { code: Code.SCRAPYD_ERROR; message: string };
 
 /**
  * Get the list of projects uploaded to this Scrapy server.
@@ -62,6 +60,9 @@ export const delproject = wrap(async function delproject(
 
   const response = await request(url, { method: "post", body: form });
   const data = await response.json();
+  if (data.status !== "ok") {
+    throw new ScrapydError(data.message);
+  }
 });
 
 export const delversion = wrap(async function (
@@ -179,6 +180,7 @@ export const cancel = wrap(async function (
 });
 
 class FetchError extends Error {}
+class ScrapydError extends Error {}
 
 async function request(url: string | URL, init?: RequestInit) {
   try {
@@ -227,6 +229,8 @@ function wrap<
       } catch (e) {
         if (e instanceof FetchError) {
           return { code: Code.FETCH_FAILED };
+        } else if (e instanceof ScrapydError) {
+          return { code: Code.SCRAPYD_ERROR, message: e.message };
         }
         throw e;
       }

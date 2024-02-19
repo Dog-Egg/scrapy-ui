@@ -5,10 +5,14 @@ import Button from "@/components/shorts/button";
 import { Label } from "@/components/ui/label";
 import { VersionSelect } from "@/components/select-version";
 import { useState } from "react";
+import { delproject } from "@/client/scrapyd-api";
+import { useCurrentNode } from "@/components/node-provider";
 
 export default function Page() {
   const [project, setProject] = useState<string>();
   const [version, setVersion] = useState<string>();
+
+  const currentNode = useCurrentNode();
 
   return (
     <div className="space-y-8">
@@ -21,7 +25,15 @@ export default function Page() {
           </Label>
           <Description>Select a project uploaded to the node.</Description>
         </div>
-        <Button variant="destructive" disabled={!project}>
+        <Button
+          variant="destructive"
+          disabled={!project}
+          onClick={() => {
+            if (currentNode && project) {
+              delproject(currentNode?.url, project);
+            }
+          }}
+        >
           Delete Project
         </Button>
       </div>

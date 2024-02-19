@@ -35,11 +35,17 @@ export function ProjectSelect({
       </SelectTrigger>
       <SelectContent>
         {projects ? (
-          projects.map((p) => (
-            <SelectItem key={p} value={p}>
-              {p}
-            </SelectItem>
-          ))
+          projects.length ? (
+            projects.map((p) => (
+              <SelectItem key={p} value={p}>
+                {p}
+              </SelectItem>
+            ))
+          ) : (
+            <div className="py-1 text-center text-xs text-muted-foreground">
+              No Project
+            </div>
+          )
         ) : (
           <div className="flex items-center justify-center py-1 text-center text-xs text-muted-foreground">
             <ReloadIcon className="mr-2 h-4 w-4 animate-spin " />
