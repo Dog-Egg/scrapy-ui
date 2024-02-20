@@ -16,23 +16,25 @@ import {
 } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 
+export type FileViewerProps = {
+  content: string;
+  title: string;
+  open: boolean;
+  onOpenChange?: (open: boolean) => void;
+  showRefreshButton?: boolean;
+  onRefresh?: () => void;
+  refreshLoading?: boolean;
+};
+
 export const FileViewer = function ({
   content,
   title,
   open,
   onOpenChange,
-  showRefreshButton,
-  loading = false,
+  showRefreshButton = false,
+  refreshLoading = false,
   onRefresh,
-}: {
-  content: string;
-  title: string;
-  open: boolean;
-  onOpenChange?: (open: boolean) => void;
-  showRefreshButton: boolean;
-  onRefresh?: () => void;
-  loading?: boolean;
-}) {
+}: FileViewerProps) {
   const lines = content.trim().split("\n");
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -93,10 +95,10 @@ export const FileViewer = function ({
             <Button2
               size="icon"
               variant={"dashed"}
-              disabled={loading}
+              disabled={refreshLoading}
               onClick={onRefresh}
             >
-              <UpdateIcon className={cn(loading && "animate-spin")} />
+              <UpdateIcon className={cn(refreshLoading && "animate-spin")} />
             </Button2>
           )}
           <Button

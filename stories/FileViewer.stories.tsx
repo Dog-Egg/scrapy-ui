@@ -1,5 +1,5 @@
 import { Meta } from "@storybook/react";
-import { FileViewer } from "@/components/file-viewer";
+import { FileViewer, FileViewerProps } from "@/components/file-viewer";
 import { Button } from "@/components/ui/button";
 import { Reducer, useCallback, useMemo, useReducer } from "react";
 
@@ -11,13 +11,13 @@ export default meta;
 function WithHook() {
   const reducer = useCallback<
     Reducer<
-      { title: string; content: string; open: boolean; loading?: boolean },
+      FileViewerProps,
       | { type: "close" }
       | { type: "open"; title: string; content: string }
       | { type: "refresh" }
       | { type: "stopRefresh"; content?: string }
     >
-  >(function (state, action) {
+  >(function (state, action): FileViewerProps {
     switch (action.type) {
       case "close":
         return { ...state, open: false };
@@ -30,11 +30,11 @@ function WithHook() {
             content: Array(100).fill(Date.now()).join("\n"),
           });
         }, 1500);
-        return { ...state, loading: true };
+        return { ...state, refreshLoading: true };
       case "stopRefresh":
         return {
           ...state,
-          loading: false,
+          refreshLoading: false,
           content: action.content || state.content,
         };
     }

@@ -49,7 +49,7 @@ import {
 import calendar from "dayjs/plugin/calendar";
 import { useToast } from "./ui/use-toast";
 import { Timer } from "./timer";
-import { FileViewer } from "./file-viewer";
+import { FileViewer, FileViewerProps } from "./file-viewer";
 
 dayjs.extend(utc);
 dayjs.extend(calendar);
@@ -325,13 +325,7 @@ export default function JobTable() {
   const refreshFunction = useRef<() => Promise<string>>();
   const reducer = useCallback<
     Reducer<
-      {
-        title: string;
-        content: string;
-        open: boolean;
-        showRefreshButton: boolean;
-        loading?: boolean;
-      },
+      FileViewerProps,
       | {
           type: "open";
           title: string;
@@ -343,7 +337,7 @@ export default function JobTable() {
       | { type: "refresh" }
       | { type: "resolveRefresh"; content: string }
     >
-  >((states, action) => {
+  >(function (states, action): FileViewerProps {
     switch (action.type) {
       case "open":
         refreshFunction.current = action.refreshFunction;
@@ -354,9 +348,9 @@ export default function JobTable() {
         refreshFunction.current?.().then((content) => {
           fileViewerDispath({ type: "resolveRefresh", content });
         });
-        return { ...states, loading: true };
+        return { ...states, refreshLoading: true };
       case "resolveRefresh":
-        return { ...states, loading: false, content: action.content };
+        return { ...states, refreshLoading: false, content: action.content };
     }
   }, []);
   const [fileViewerStates, fileViewerDispath] = useReducer(reducer, {
