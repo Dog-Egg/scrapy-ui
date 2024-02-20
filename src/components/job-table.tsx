@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Reducer,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { DataTable } from "./data-table";
 import type {
   FinishedJob,
@@ -41,10 +49,7 @@ import {
 import calendar from "dayjs/plugin/calendar";
 import { useToast } from "./ui/use-toast";
 import { Timer } from "./timer";
-import {
-  FileContentViewer,
-  FileContentViewerHandle,
-} from "./file-content-viewer";
+import { FileViewer } from "./file-viewer";
 
 dayjs.extend(utc);
 dayjs.extend(calendar);
@@ -219,12 +224,20 @@ export default function JobTable() {
                   <DropdownMenuItem
                     onClick={() => {
                       if (currentNode && log_url) {
-                        viewLog(currentNode?.url, log_url).then(
-                          (content) =>
-                            fileContentViewerRef.current?.render({
-                              title: "Log",
-                              content: content,
-                            }),
+                        viewLog(currentNode?.url, log_url).then((content) =>
+                          fileViewerDispath({
+                            type: "open",
+                            title: "Log",
+                            content,
+                            showRefreshButton: stage === "running",
+                            refreshFunction() {
+                              if (log_url) {
+                                return viewLog(currentNode.url, log_url);
+                              } else {
+                                return Promise.reject("no log_url");
+                              }
+                            },
+                          }),
                         );
                       }
                     }}
@@ -238,9 +251,18 @@ export default function JobTable() {
                       if (currentNode && items_url) {
                         viewItems(currentNode?.url, items_url).then(
                           (content) => {
-                            fileContentViewerRef.current?.render({
+                            fileViewerDispath({
+                              type: "open",
                               title: "Items",
                               content,
+                              showRefreshButton: stage === "running",
+                              refreshFunction() {
+                                if (items_url) {
+                                  return viewItems(currentNode.url, items_url);
+                                } else {
+                                  return Promise.reject("no items_url");
+                                }
+                              },
                             });
                           },
                         );
@@ -299,7 +321,50 @@ export default function JobTable() {
     };
   }, [fetchTableDatas]);
 
-  const fileContentViewerRef = useRef<FileContentViewerHandle>(null);
+  // log & items viewer
+  const refreshFunction = useRef<() => Promise<string>>();
+  const reducer = useCallback<
+    Reducer<
+      {
+        title: string;
+        content: string;
+        open: boolean;
+        showRefreshButton: boolean;
+        loading?: boolean;
+      },
+      | {
+          type: "open";
+          title: string;
+          content: string;
+          showRefreshButton: boolean;
+          refreshFunction: () => Promise<string>;
+        }
+      | { type: "close" }
+      | { type: "refresh" }
+      | { type: "resolveRefresh"; content: string }
+    >
+  >((states, action) => {
+    switch (action.type) {
+      case "open":
+        refreshFunction.current = action.refreshFunction;
+        return { ...states, open: true, ...action };
+      case "close":
+        return { ...states, open: false };
+      case "refresh":
+        refreshFunction.current?.().then((content) => {
+          fileViewerDispath({ type: "resolveRefresh", content });
+        });
+        return { ...states, loading: true };
+      case "resolveRefresh":
+        return { ...states, loading: false, content: action.content };
+    }
+  }, []);
+  const [fileViewerStates, fileViewerDispath] = useReducer(reducer, {
+    title: "",
+    content: "",
+    open: false,
+    showRefreshButton: false,
+  });
 
   return (
     <div className="space-y-4">
@@ -318,7 +383,13 @@ export default function JobTable() {
         columns={columns}
         initialSortingState={[{ id: "startTime", desc: true }]}
       />
-      <FileContentViewer ref={fileContentViewerRef} />
+      <FileViewer
+        {...fileViewerStates}
+        onOpenChange={() => fileViewerDispath({ type: "close" })}
+        onRefresh={() => {
+          fileViewerDispath({ type: "refresh" });
+        }}
+      />
     </div>
   );
 }
