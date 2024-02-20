@@ -1,5 +1,12 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import Button from "./shorts/button";
 
 export type FileContentViewerHandle = {
   render(props: { title: string; content: string }): void;
@@ -23,7 +30,7 @@ export const FileContentViewer = forwardRef<FileContentViewerHandle>(function (
     };
   });
 
-  const lines = content.split("\n");
+  const lines = content.trim().split("\n");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -45,6 +52,26 @@ export const FileContentViewer = forwardRef<FileContentViewerHandle>(function (
             ))}
           </ol>
         </div>
+        <DialogFooter>
+          <Button
+            variant={"dashed"}
+            onClick={() => {
+              const file = new Blob([content]);
+              const link = document.createElement("a");
+              const url = URL.createObjectURL(file);
+              link.href = url;
+              link.download = `${title}_${new Date()
+                .toISOString()
+                .substring(0, 10)
+                .replaceAll("-", "")}.txt`;
+              link.click();
+
+              URL.revokeObjectURL(url);
+            }}
+          >
+            Download
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
