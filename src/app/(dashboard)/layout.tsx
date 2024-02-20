@@ -10,6 +10,7 @@ import { HeaderNav } from "@/components/header-nav";
 import Link from "next/link";
 import { ErrorView } from "@/components/error-view";
 import { usePathname } from "next/navigation";
+import { Footer } from "@/components/footer";
 
 export default function DashBoardLayout({
   children,
@@ -124,6 +125,9 @@ export default function DashBoardLayout({
           </p>
         </div>
       )}
+
+      {/* footer */}
+      <Footer />
 
       {/* adding node */}
       <NodeFormDialog
