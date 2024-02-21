@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
+import { Uploader } from "@/components/uploader";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -24,7 +25,7 @@ dayjs.extend(utc);
 
 export default function Page() {
   const formSchema = z.object({
-    egg: z.instanceof(File, { message: "Egg File is required." }),
+    egg: z.instanceof(Blob, { message: "Egg File is required." }),
     project: z.string({ required_error: "Project Name is required." }),
     version: z.string().default(() => dayjs.utc().format("YYYYMMDDHHmmss")),
   });
@@ -72,21 +73,19 @@ export default function Page() {
           <FormField
             control={form.control}
             name="egg"
-            render={({ field }) => (
+            render={({ field: { value, ...field } }) => (
               <FormItem>
                 <FormLabel required>Egg File</FormLabel>
                 <FormControl>
-                  <Input
-                    type="file"
+                  <Uploader
                     accept=".egg"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file && !watchProjectName) {
+                    beforeUpload={(file) => {
+                      if (!watchProjectName) {
                         form.setValue("project", file.name.split(".")[0]);
                         form.clearErrors("project");
                       }
-                      field.onChange(e.target.files?.[0]);
                     }}
+                    {...field}
                   />
                 </FormControl>
                 <FormDescription>
