@@ -1,5 +1,7 @@
 # ScrapyUI
 
+This is a web service that manages and schedules [Scrapyd](https://scrapyd.readthedocs.io/).
+
 ## Running
 
 ### via `npx`
@@ -22,8 +24,22 @@ npx scrapy-ui@latest run --port 8000
 docker run -p 8600:8600 -d dogegg/scrapy-ui
 ```
 
-Replace the `<hostpath>` below to save the database on the host.
+Replace the `HOST_PATH` below to save the database on the host.
 
 ```bash
-docker run -p 8600:8600 --volume=<hostpath>:/data -d dogegg/scrapy-ui
+docker run -p 8600:8600 --volume=HOST_PATH:/data -d dogegg/scrapy-ui
+```
+
+## Installation the latest deveoplment package
+
+```bash
+# create a directory to install package.
+mkdir scrapy-ui-service
+cd scrapy-ui-service
+
+# install the latest scrapy-ui package.
+npm install git+https://github.com/Dog-Egg/scrapy-ui.git#latest
+
+# run service
+./node_modules/.bin/scrapy-ui run
 ```
