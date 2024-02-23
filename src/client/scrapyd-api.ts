@@ -4,6 +4,9 @@ import * as actions from "@/actions/scrapyd-api";
 import { setError } from "@/components/error-view";
 import { toast } from "@/components/ui/use-toast";
 import { Code } from "@/utils/enum";
+import NProgress from "nprogress";
+
+NProgress.configure({ showSpinner: false });
 
 /**
  * 将 Scrapyd API Action 返回的错误类型在 client 端统一处理，并解包正确的结果数据。
@@ -11,9 +14,12 @@ import { Code } from "@/utils/enum";
 function unwrap<
   T extends (...args: Parameters<T>) => Promise<actions.ResultType<P>>,
   P = ReturnType<T> extends Promise<actions.ResultType<infer S>> ? S : unknown,
->(action: T) {
+>(action: T, { showProgress = true }: { showProgress?: boolean } = {}) {
   return async (...args: Parameters<typeof action>) => {
+    showProgress && NProgress.start();
     const res = await action(...args);
+    showProgress && NProgress.done();
+
     switch (res.code) {
       case Code.OK:
         return res.data;
@@ -33,7 +39,7 @@ function unwrap<
   };
 }
 
-export const listjobs = unwrap(actions.listjobs);
+export const listjobs = unwrap(actions.listjobs, { showProgress: false });
 export const listprojects = unwrap(actions.listprojects);
 export const cancel = unwrap(actions.cancel);
 export const listversions = unwrap(actions.listversions);

@@ -59,3 +59,5 @@
     --ring: 35.5 91.7% 32.9%;
   }
 }
+
+@import "../style/nprogress.css";
