@@ -200,6 +200,9 @@ async function request(url: string | URL, init?: RequestInit) {
 export const viewLog = wrap(async function (baseUrl: string, logUrl: string) {
   const url = new URL(logUrl, baseUrl);
   const response = await request(url);
+  if (response.status === 404) {
+    throw new ScrapydError("The log file is not found.");
+  }
   return await response.text();
 });
 
@@ -209,6 +212,9 @@ export const viewItems = wrap(async function viewItems(
 ) {
   const url = new URL(itemsUrl, baseUrl);
   const response = await request(url);
+  if (response.status === 404) {
+    throw new ScrapydError("The items file is not found.");
+  }
   return await response.text();
 });
 
