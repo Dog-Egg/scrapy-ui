@@ -1,6 +1,7 @@
 "use client";
 
-import { getAllNodes, Node } from "@/db";
+import { getAllNodes } from "@/actions/db";
+import { DBNode } from "@/utils/types";
 import { useEffect, useMemo, useState } from "react";
 import { NodeContext } from "@/components/node-provider";
 import { NodeSelect } from "@/components/select-node";
@@ -17,7 +18,7 @@ export default function DashBoardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [nodes, setNodes] = useState<Node[]>([]);
+  const [nodes, setNodes] = useState<DBNode[]>([]);
   const [selectedUrl, setSelectedUrl] = useState("");
   const [nodesLoading, setNodesLoading] = useState(true);
 

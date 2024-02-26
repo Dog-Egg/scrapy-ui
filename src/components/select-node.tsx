@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { ReloadIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import { ServerStackIcon } from "@heroicons/react/24/outline";
-import type { Node } from "@/db";
+import type { DBNode } from "@/utils/types";
 
 export function NodeSelect({
   loading,
@@ -19,7 +19,7 @@ export function NodeSelect({
 }: {
   loading: boolean;
   value: string;
-  nodes: Node[];
+  nodes: DBNode[];
   onValueChange: (value: string) => void;
   onAddNode: () => void;
 }) {

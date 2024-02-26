@@ -1,6 +1,8 @@
 "use server";
 
 import { Code } from "@/utils/enum";
+import { createJob, getNodeByURL } from "./db";
+import { DBNode, JobArgs } from "@/utils/types";
 
 export type ResultType<T> =
   | { code: Code.OK; data: T }
@@ -81,31 +83,21 @@ export const delversion = wrap(async function (
   }
 });
 
-export const schedule = wrap(async function (
-  baseURL: string,
-  project: string,
-  spider: string,
-  options?: {
-    version?: string;
-    priority?: number;
-    settings?: Record<string, string>;
-    arguments?: Record<string, string>;
-  },
-) {
-  const url = new URL("schedule.json", baseURL);
+export const schedule = wrap(async function (node: DBNode, args: JobArgs) {
+  const url = new URL("schedule.json", node.url);
 
   const formdata = new FormData();
-  formdata.append("project", project);
-  formdata.append("spider", spider);
-  options?.version && formdata.append("_version", options.version);
-  options?.priority && formdata.append("priority", options.priority.toString());
-  if (options?.settings)
-    for (const [k, v] of Object.entries(options.settings)) {
-      formdata.append("setting", `${k}=${v}`);
+  formdata.append("project", args.project);
+  formdata.append("spider", args.spider);
+  args?.version && formdata.append("_version", args.version);
+  args?.priority && formdata.append("priority", args.priority.toString());
+  if (args?.settings)
+    for (const item of args.settings) {
+      formdata.append("setting", `${item.key}=${item.value}`);
     }
-  if (options?.arguments)
-    for (const [k, v] of Object.entries(options.arguments)) {
-      formdata.append(k, v);
+  if (args?.arguments)
+    for (const item of args.arguments) {
+      formdata.append(item.key, item.value);
     }
 
   const response = await request(url, { method: "post", body: formdata });
@@ -113,6 +105,9 @@ export const schedule = wrap(async function (
   if (data.status !== "ok") {
     throw Error(JSON.stringify(data));
   }
+
+  // "save data to jobs table"
+  createJob(node.id, data.jobid, { version: 1, data: args });
 });
 
 export const daemonstatus = wrap(async function (

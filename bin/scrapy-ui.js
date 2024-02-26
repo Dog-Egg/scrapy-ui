@@ -2,8 +2,8 @@
 
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
-const DBMigrate = require("db-migrate");
 const path = require("path");
+const dbmigrate = require("./_migration").dbmigrate;
 
 yargs(hideBin(process.argv))
   .command(
@@ -23,10 +23,8 @@ yargs(hideBin(process.argv))
       process.env.SCRAPY_UI_DATABASE = argv.dbfile;
       process.env.PORT = argv.port;
 
-      dbmigrate(argv.dbfile, {
-        callback: () => {
-          require("../build/standalone/server");
-        },
+      dbmigrate(argv.dbfile, () => {
+        require("../build/standalone/server");
       });
     },
   )
@@ -48,31 +46,9 @@ yargs(hideBin(process.argv))
 function dbCmdOptions(yargs) {
   return yargs.option("dbfile", {
     describe: "Specify database file.",
-    default: "scrapy-ui.db",
+    default: path.resolve("scrapy-ui.db"),
     coerce(arg) {
       return path.resolve(arg);
     },
-  });
-}
-
-/**
- * 向上迁移数据库。
- */
-function dbmigrate(filename, { callback } = {}) {
-  const dbm = DBMigrate.getInstance(true, {
-    config: {
-      prod: {
-        driver: "sqlite3",
-        filename,
-      },
-    },
-    cmdOptions: {
-      "migrations-dir": path.join(__dirname, "../migrations"),
-    },
-    env: "prod",
-  });
-
-  dbm.up().then(() => {
-    callback && callback();
   });
 }

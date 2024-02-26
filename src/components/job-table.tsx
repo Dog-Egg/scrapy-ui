@@ -50,6 +50,8 @@ import calendar from "dayjs/plugin/calendar";
 import { useToast } from "./ui/use-toast";
 import { Timer } from "./timer";
 import { FileViewer, FileViewerProps } from "./file-viewer";
+import { useScheduleFormDialog } from "@/stores";
+import { getJob } from "@/actions/db";
 
 dayjs.extend(utc);
 dayjs.extend(calendar);
@@ -89,6 +91,7 @@ export default function JobTable() {
   }
 
   const { toast } = useToast();
+  const { setOpenDialog, setInitFormValues } = useScheduleFormDialog();
 
   const columns: ColumnDef<Job>[] = useMemo(() => {
     return [
@@ -272,13 +275,31 @@ export default function JobTable() {
                     View Items
                   </DropdownMenuItem>
                 )}
+                <DropdownMenuItem
+                  onClick={() => {
+                    currentNode &&
+                      getJob(currentNode.id, row.original.id).then((data) => {
+                        if (data) {
+                          setInitFormValues(data.args.data);
+                          setOpenDialog(true, "copying");
+                        } else {
+                          toast({
+                            title: "This job can't be copied.",
+                            variant: "destructive",
+                          });
+                        }
+                      });
+                  }}
+                >
+                  Copy Job
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           );
         },
       },
     ];
-  }, [searchValue, currentNode, toast]);
+  }, [searchValue, currentNode, toast, setOpenDialog, setInitFormValues]);
 
   // tables
   const [tableData, setTableData] = useState<Job[]>([]);
@@ -368,9 +389,13 @@ export default function JobTable() {
           placeholder="Filter jobs..."
           onChange={(e) => setSearchValue(e.target.value)}
         />
-        <ScheduleFormDialog>
-          <Button>Create a Job</Button>
-        </ScheduleFormDialog>
+        <Button
+          onClick={() => {
+            setOpenDialog(true, "creation");
+          }}
+        >
+          Create a Job
+        </Button>
       </div>
       <DataTable
         data={filterTableData(tableData || [])}
@@ -384,6 +409,7 @@ export default function JobTable() {
           fileViewerDispath({ type: "refresh" });
         }}
       />
+      <ScheduleFormDialog />
     </div>
   );
 }

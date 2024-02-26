@@ -23,6 +23,7 @@ import { SpiderSelect } from "./select-spider";
 import { schedule } from "@/client/scrapyd-api";
 import { useCurrentNode } from "./node-provider";
 import { useToast } from "./ui/use-toast";
+import { useScheduleFormDialog } from "@/stores";
 
 const formSchema = z.object({
   project: z.string({ required_error: "The project is required." }),
@@ -48,8 +49,11 @@ export function ScheduleForm({
 }: {
   onSubmitSuccess?(): void;
 }) {
+  const { initFormValues, type } = useScheduleFormDialog();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: type === "copying" ? initFormValues : undefined,
   });
 
   const argumentFields = useFieldArray({
@@ -67,16 +71,7 @@ export function ScheduleForm({
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (currentNode) {
       setSubmitLoading(true);
-      schedule(currentNode?.url, values.project, values.spider, {
-        version: values.version,
-        priority: values.priority ? parseInt(values.priority) : undefined,
-        settings: Object.fromEntries(
-          values.settings.map(({ key, value }) => [key, value]),
-        ),
-        arguments: Object.fromEntries(
-          values.arguments.map(({ key, value }) => [key, value]),
-        ),
-      })
+      schedule(currentNode, values)
         .then(() => onSubmitSuccess?.())
         .catch((error) => {
           toast({
@@ -109,13 +104,17 @@ export function ScheduleForm({
             <FormItem>
               <FormLabel>Project</FormLabel>
               <FormControl>
-                <ProjectSelect
-                  className="w-full"
-                  onValueChange={(value) => {
-                    setProject(value);
-                    field.onChange(value);
-                  }}
-                />
+                {type == "copying" ? (
+                  <Input value={field.value} readOnly />
+                ) : (
+                  <ProjectSelect
+                    className="w-full"
+                    onValueChange={(value) => {
+                      setProject(value);
+                      field.onChange(value);
+                    }}
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -129,19 +128,23 @@ export function ScheduleForm({
             <FormItem>
               <FormLabel>Spider</FormLabel>
               <FormControl>
-                <SpiderSelect
-                  className="w-full"
-                  project={project}
-                  version={version}
-                  onValueChange={field.onChange}
-                />
+                {type == "copying" ? (
+                  <Input readOnly value={field.value} />
+                ) : (
+                  <SpiderSelect
+                    className="w-full"
+                    project={project}
+                    version={version}
+                    onValueChange={field.onChange}
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {!showMore && (
+        {!showMore && type !== "copying" && (
           <div className="flex">
             <Button
               variant="ghost"
@@ -155,7 +158,7 @@ export function ScheduleForm({
             </Button>
           </div>
         )}
-        {showMore && (
+        {(type === "copying" || showMore) && (
           <>
             {/* version */}
             <FormField
@@ -164,15 +167,23 @@ export function ScheduleForm({
                 <FormItem>
                   <FormLabel>Version</FormLabel>
                   <FormControl>
-                    <VersionSelect
-                      placeholder="Latest"
-                      className="w-full"
-                      project={project}
-                      onValueChange={(value) => {
-                        setVerion(value);
-                        field.onChange(value);
-                      }}
-                    />
+                    {type == "copying" ? (
+                      <Input
+                        value={field.value}
+                        placeholder="Latest"
+                        readOnly
+                      />
+                    ) : (
+                      <VersionSelect
+                        placeholder="Latest"
+                        className="w-full"
+                        project={project}
+                        onValueChange={(value) => {
+                          setVerion(value);
+                          field.onChange(value);
+                        }}
+                      />
+                    )}
                   </FormControl>
                 </FormItem>
               )}

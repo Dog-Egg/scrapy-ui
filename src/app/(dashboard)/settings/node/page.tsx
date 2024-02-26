@@ -3,7 +3,7 @@
 import { useCurrentNode } from "@/components/node-provider";
 import Button from "@/components/shorts/button";
 import * as Message from "@/components/shorts/message";
-import { deleteNodeByUrl } from "@/db";
+import { deleteNodeByUrl } from "@/actions/db";
 
 export default function Page() {
   const currentNode = useCurrentNode();

@@ -6,10 +6,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { NodeForm, NodeFormHandle } from "@/components/node-form";
-import { addNode } from "@/db";
+import { createNode } from "@/actions/db";
 import { useRef, useState } from "react";
 import Button from "./shorts/button";
-import type { Node } from "@/db";
+import type { ScrapydNode } from "@/utils/types";
 
 export function NodeFormDialog({
   open: openDialog,
@@ -18,7 +18,7 @@ export function NodeFormDialog({
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onAddSuccessful: (node: Node) => void;
+  onAddSuccessful: (node: ScrapydNode) => void;
 }) {
   // add form
   const formRef = useRef<NodeFormHandle>(null);
@@ -34,7 +34,7 @@ export function NodeFormDialog({
           ref={formRef}
           onSubmit={(values) => {
             setSaveLoading(true);
-            addNode(values)
+            createNode(values)
               .then((res) => {
                 if (res.ok) {
                   setOpenDialog(false);
