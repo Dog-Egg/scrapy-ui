@@ -2,6 +2,8 @@
 
 This is a web service that manages and schedules [Scrapyd](https://scrapyd.readthedocs.io/).
 
+[![Published on npm](https://img.shields.io/npm/v/scrapy-ui?logo=npm)](https://www.npmjs.com/package/scrapy-ui)
+
 ## Running
 
 ### via `npx`
