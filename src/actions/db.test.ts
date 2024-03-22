@@ -1,6 +1,6 @@
 import { test, beforeEach, expect } from "@jest/globals";
 import { createJob, createNode, deleteNodeByUrl, getJob } from "./db";
-import { dbmigrate } from "../../bin/_migration";
+import { dbmigrate } from "../../lib/migration";
 
 beforeEach(() => {
   return new Promise((resolve) => {

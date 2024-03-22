@@ -3,7 +3,7 @@
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 const path = require("path");
-const dbmigrate = require("./_migration").dbmigrate;
+const dbmigrate = require("../lib/migration").dbmigrate;
 
 yargs(hideBin(process.argv))
   .command(
