@@ -40,8 +40,8 @@ mkdir scrapy-ui-service
 cd scrapy-ui-service
 
 # install the latest scrapy-ui package.
-npm install git+https://github.com/Dog-Egg/scrapy-ui.git#latest
+npm install git+https://github.com/Dog-Egg/scrapy-ui.git#alpha
 
 # run service
-./node_modules/.bin/scrapy-ui run
+npx scrapy-ui run
 ```

@@ -24,7 +24,7 @@ yargs(hideBin(process.argv))
       process.env.PORT = argv.port;
 
       dbmigrate(argv.dbfile, () => {
-        require("../build/standalone/server");
+        require("../server");
       });
     },
   )

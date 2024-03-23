@@ -18,28 +18,28 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - run: node scripts/cp.js
-
-      # publish to npmjs.org
-      - name: publish to npmjs.org
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm run dist
+      - run: npm pack -ws && tar -xzf scrapy-ui-*.tgz
 
       # publish to branch
-      - name: publish to branch
-        run: npm pack && tar -xzf scrapy-ui-*.tgz
       - uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FOLDER: ./package
-          BRANCH: latest
+          BRANCH: alpha
           COMMIT_NAME: "github-actions[bot]"
           COMMIT_EMAIL: "github-actions[bot]@users.noreply.github.com"
 
+      # publish to npmjs.org
+      - name: publish to npmjs.org
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: npm publish -ws
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
   dockerhub:
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: publish
     runs-on: ubuntu-latest
     steps:

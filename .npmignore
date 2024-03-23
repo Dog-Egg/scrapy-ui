@@ -1,5 +1,0 @@
-*
-!build/standalone/*
-!build/standalone/build/**/*
-!migrations/*
-!lib/*
