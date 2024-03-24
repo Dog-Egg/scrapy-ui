@@ -83,7 +83,6 @@
     "zustand": "^4.5.1"
   },
   "bundledDependencies": [
-    "better-sqlite3",
     "next"
   ]
 }
