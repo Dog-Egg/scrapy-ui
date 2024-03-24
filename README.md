@@ -39,8 +39,11 @@ docker run -p 8600:8600 --volume=HOST_PATH:/data -d dogegg/scrapy-ui
 mkdir scrapy-ui-service
 cd scrapy-ui-service
 
-# install the latest scrapy-ui package.
-npm install git+https://github.com/Dog-Egg/scrapy-ui.git#alpha
+# download package.
+curl -LO https://cdn.jsdelivr.net/gh/Dog-Egg/scrapy-ui@packages/scrapy-ui-dev.tgz
+
+# install package.
+npm install scrapy-ui-dev.tgz
 
 # run service
 npx scrapy-ui run

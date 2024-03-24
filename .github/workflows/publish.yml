@@ -17,17 +17,25 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: npm ci
       - run: npm test
+
+      - name: set package version
+        run: |
+          if ! [[ "${{ github.ref }}" =~ ^refs/tags/v ]]; then
+            echo "PACKAGE_VERSION=dev" >> "$GITHUB_ENV"
+            echo "PACKAGE_VERSION_VERBOSE=dev-$(git log -1 --format="%cd" --date=format:'%Y%m%d%H%M%S')" >> "$GITHUB_ENV"
+          fi
+
       - run: npm run build
       - run: npm run dist
-      - run: npm pack -ws && tar -xzf scrapy-ui-*.tgz
 
-      # publish to branch
+      # make and push package
+      - run: npm pack -ws && mkdir packages && mv scrapy-ui-*.tgz packages/
       - uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FOLDER: ./package
-          BRANCH: alpha
+          FOLDER: ./packages
+          BRANCH: packages
           COMMIT_NAME: "github-actions[bot]"
           COMMIT_EMAIL: "github-actions[bot]@users.noreply.github.com"
 

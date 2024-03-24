@@ -21,6 +21,9 @@ async function modifyPackageJson() {
 
   packageJson.private = false;
   packageJson.files = ["*"];
+  if (process.env.PACKAGE_VERSION) {
+    packageJson.version = process.env.PACKAGE_VERSION;
+  }
 
   fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
