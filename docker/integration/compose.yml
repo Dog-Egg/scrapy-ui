@@ -5,7 +5,7 @@ services:
     ports:
       - 8600:8600
     volumes:
-      - ./data:/data
+      - ${SCRAPY_UI_DATA_DIR:-./data}:/data
   scrapyd:
     build:
       context: ./scrapyd/
