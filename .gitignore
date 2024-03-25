@@ -38,5 +38,5 @@ next-env.d.ts
 # sqlite3
 *.db
 
-docker/
 dist/
+

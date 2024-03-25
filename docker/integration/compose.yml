@@ -1,0 +1,13 @@
+services:
+  scrapy-ui:
+    build:
+      context: ./scrapy-ui/
+    ports:
+      - 8600:8600
+    volumes:
+      - ./data:/data
+  scrapyd:
+    build:
+      context: ./scrapyd/
+    ports:
+      - 127.0.0.1:6800:6800
