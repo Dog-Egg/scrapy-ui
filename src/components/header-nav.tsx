@@ -3,8 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { label: "Jobs", link: "/jobs" },
-  { label: "Settings", link: "/settings" },
+  { label: "任务", link: "/jobs" },
+  { label: "设置", link: "/settings" },
 ];
 
 export function HeaderNav() {

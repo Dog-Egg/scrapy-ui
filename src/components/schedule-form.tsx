@@ -26,19 +26,19 @@ import { useToast } from "./ui/use-toast";
 import { useScheduleFormDialog } from "@/stores";
 
 const formSchema = z.object({
-  project: z.string({ required_error: "The project is required." }),
-  spider: z.string({ required_error: "The spider is required." }),
+  project: z.string({ required_error: "项目不能为空。" }),
+  spider: z.string({ required_error: "爬虫不能为空。" }),
   version: z.optional(z.string()),
   arguments: z.array(
     z.object({
-      key: z.string().trim().min(1, "The key of argument is required."),
-      value: z.string().trim().min(1, "The value of argument is required."),
+      key: z.string().trim().min(1, "参数的键不能为空。"),
+      value: z.string().trim().min(1, "参数的值不能为空。"),
     }),
   ),
   settings: z.array(
     z.object({
-      key: z.string().trim().min(1, "The key of setting is required."),
-      value: z.string().trim().min(1, "The value of setting is required."),
+      key: z.string().trim().min(1, "设置的键不能为空。"),
+      value: z.string().trim().min(1, "设置的值不能为空。"),
     }),
   ),
   priority: z.optional(z.string()),
@@ -76,7 +76,7 @@ export function ScheduleForm({
         .catch((error) => {
           toast({
             variant: "destructive",
-            title: "Oh no! Something went wrong.",
+            title: "糟糕！出错了。",
             description: error,
           });
         })
@@ -102,7 +102,7 @@ export function ScheduleForm({
           name="project"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project</FormLabel>
+              <FormLabel>项目</FormLabel>
               <FormControl>
                 {type == "copying" ? (
                   <Input value={field.value} readOnly />
@@ -126,7 +126,7 @@ export function ScheduleForm({
           name="spider"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Spider</FormLabel>
+              <FormLabel>爬虫</FormLabel>
               <FormControl>
                 {type == "copying" ? (
                   <Input readOnly value={field.value} />
@@ -154,7 +154,7 @@ export function ScheduleForm({
                 setShowMore(true);
               }}
             >
-              show more
+              显示更多
             </Button>
           </div>
         )}
@@ -165,17 +165,13 @@ export function ScheduleForm({
               name="version"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Version</FormLabel>
+                  <FormLabel>版本</FormLabel>
                   <FormControl>
                     {type == "copying" ? (
-                      <Input
-                        value={field.value}
-                        placeholder="Latest"
-                        readOnly
-                      />
+                      <Input value={field.value} placeholder="最新" readOnly />
                     ) : (
                       <VersionSelect
-                        placeholder="Latest"
+                        placeholder="最新"
                         className="w-full"
                         project={project}
                         onValueChange={(value) => {
@@ -191,7 +187,7 @@ export function ScheduleForm({
 
             {/* arguments */}
             <FormItem>
-              <FormLabel>Arguments</FormLabel>
+              <FormLabel>参数</FormLabel>
               {argumentFields.fields.map((item, index) => (
                 <div
                   key={item.id}
@@ -202,7 +198,7 @@ export function ScheduleForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Key" {...field} />
+                          <Input placeholder="键" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -213,14 +209,14 @@ export function ScheduleForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Value" {...field} />
+                          <Input placeholder="值" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <Button
-                    className="shrink-0 grow-0"
+                    className="shrink-0"
                     type="button"
                     size="icon"
                     icon={<Cross1Icon />}
@@ -240,16 +236,14 @@ export function ScheduleForm({
                   argumentFields.append({ value: "", key: "" });
                 }}
               >
-                Add Argument
+                添加参数
               </Button>
-              <FormDescription>
-                The arguments to use when running the spider.
-              </FormDescription>
+              <FormDescription>运行爬虫时使用的参数。</FormDescription>
             </FormItem>
 
             {/* settings */}
             <FormItem>
-              <FormLabel>Settiings</FormLabel>
+              <FormLabel>设置</FormLabel>
               {settingFields.fields.map((item, index) => (
                 <div
                   key={item.id}
@@ -260,7 +254,7 @@ export function ScheduleForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Key" {...field} />
+                          <Input placeholder="键" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -271,7 +265,7 @@ export function ScheduleForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Value" {...field} />
+                          <Input placeholder="值" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -298,11 +292,9 @@ export function ScheduleForm({
                   settingFields.append({ value: "", key: "" });
                 }}
               >
-                Add Setting
+                添加设置
               </Button>
-              <FormDescription>
-                Scrapy settings to use when running the spider.
-              </FormDescription>
+              <FormDescription>运行爬虫时使用的 Scrapy 设置。</FormDescription>
             </FormItem>
 
             <FormField
@@ -310,22 +302,20 @@ export function ScheduleForm({
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Priority</FormLabel>
+                    <FormLabel>优先级</FormLabel>
                     <FormControl>
                       <Select
                         className="w-full"
                         options={[
-                          { label: "High", value: "10" },
-                          { label: "Medium", value: "0" },
-                          { label: "Low", value: "-10" },
+                          { label: "高", value: "10" },
+                          { label: "中", value: "0" },
+                          { label: "低", value: "-10" },
                         ]}
                         {...field}
                         defaultValue="0"
                       />
                     </FormControl>
-                    <FormDescription>
-                      Priority for this project’s spider queue.
-                    </FormDescription>
+                    <FormDescription>此项目爬虫队列的优先级。</FormDescription>
                     <FormMessage />
                   </FormItem>
                 );
@@ -334,7 +324,7 @@ export function ScheduleForm({
           </>
         )}
         <Button type="submit" loading={submitLoading}>
-          Submit
+          提交
         </Button>
       </form>
     </Form>

@@ -41,7 +41,7 @@ export function NodeSelect({
           ) : (
             <ServerStackIcon className="mr-2 h-5 w-5 flex-shrink-0" />
           )}
-          <SelectValue placeholder="Select a node" />
+          <SelectValue placeholder="选择一个节点" />
         </div>
       </SelectTrigger>
       <SelectContent>
@@ -54,7 +54,7 @@ export function NodeSelect({
         <SelectItem value="add">
           <div className="flex items-center">
             <PlusCircledIcon className="mr-2 h-5 w-5" />
-            Add Node
+            添加节点
           </div>
         </SelectItem>
       </SelectContent>

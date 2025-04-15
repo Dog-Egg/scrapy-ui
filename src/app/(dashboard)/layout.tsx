@@ -119,10 +119,10 @@ export default function DashBoardLayout({
       ) : (
         <div className="m-auto text-center">
           <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            Welcome to ScrapyUI
+            欢迎使用 ScrapyUI
           </h2>
           <p className="leading-7 [&:not(:first-child)]:mt-6">
-            Please select a node first.
+            请先选择一个节点。
           </p>
         </div>
       )}

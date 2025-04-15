@@ -5,10 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PropsWithChildren } from "react";
 
-const menu = [
-  { label: "Node", link: "/settings/node" },
-  { label: "Projects", link: "/settings/projects" },
-  { label: "Upload Project", link: "/settings/upload" },
+const links = [
+  { label: "通用设置", link: "/settings/general" },
+  { label: "项目", link: "/settings/projects" },
+  { label: "上传项目", link: "/settings/upload" },
 ];
 
 export default function Layout({ children }: PropsWithChildren) {
@@ -17,7 +17,7 @@ export default function Layout({ children }: PropsWithChildren) {
     <div className="flex">
       {/* menu */}
       <ul className="w-1/5 space-y-1">
-        {menu.map((item) => (
+        {links.map((item) => (
           <li key={item.link} className={cn()}>
             <Link
               className={cn(

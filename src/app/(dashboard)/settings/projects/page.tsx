@@ -20,10 +20,10 @@ export default function Page() {
       <div className="space-y-4">
         <div className="space-y-2">
           <Label className="space-y-2">
-            <span>Project</span>
+            <span>项目</span>
             <ProjectSelect onValueChange={setProject} />
           </Label>
-          <Description>Select a project uploaded to the node.</Description>
+          <Description>选择上传到节点的项目。</Description>
         </div>
         <Button
           variant="destructive"
@@ -34,7 +34,7 @@ export default function Page() {
             }
           }}
         >
-          Delete Project
+          删除项目
         </Button>
       </div>
 
@@ -42,12 +42,12 @@ export default function Page() {
       <div className="space-y-4">
         <div className="space-y-2">
           <Label className="space-y-2">
-            <span>Version</span>
+            <span>版本</span>
             <VersionSelect project={project} onValueChange={setVersion} />
           </Label>
         </div>
         <Button variant="destructive" disabled={!version}>
-          Delete Version
+          删除版本
         </Button>
       </div>
     </div>

@@ -24,7 +24,7 @@ import { CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { Code } from "@/utils/enum";
 
 const formSchema = z.object({
-  url: z.string({ required_error: "URL is required." }).url(),
+  url: z.string({ required_error: "URL 是必需的。" }).url(),
 });
 
 interface NodeFormProps {
@@ -85,7 +85,7 @@ export const NodeForm = forwardRef<NodeFormHandle, NodeFormProps>(function (
           name="url"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Node URL</FormLabel>
+              <FormLabel>节点 URL</FormLabel>
               <FormControl>
                 <Input {...field}></Input>
               </FormControl>
@@ -116,7 +116,7 @@ export const NodeForm = forwardRef<NodeFormHandle, NodeFormProps>(function (
                 });
             }}
           >
-            Test Connection
+            测试连接
           </Button>
           <span
             className={
@@ -125,13 +125,13 @@ export const NodeForm = forwardRef<NodeFormHandle, NodeFormProps>(function (
           >
             {testResult == "success" && (
               <>
-                Connection successful
+                连接成功
                 <CheckIcon className="ml-1 h-4 w-4 text-success" />
               </>
             )}
             {testResult == "failure" && (
               <>
-                Connection failure
+                连接失败
                 <Cross2Icon className="ml-1 h-4 w-4 text-destructive" />
               </>
             )}

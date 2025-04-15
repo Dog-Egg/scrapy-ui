@@ -28,7 +28,7 @@ export function NodeFormDialog({
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Node</DialogTitle>
+          <DialogTitle>添加节点</DialogTitle>
         </DialogHeader>
         <NodeForm
           ref={formRef}
@@ -53,7 +53,7 @@ export function NodeFormDialog({
         ></NodeForm>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpenDialog(false)}>
-            Cancel
+            取消
           </Button>
           <Button
             onClick={() => {
@@ -61,7 +61,7 @@ export function NodeFormDialog({
             }}
             loading={saveLoading}
           >
-            Submit
+            提交
           </Button>
         </DialogFooter>
       </DialogContent>

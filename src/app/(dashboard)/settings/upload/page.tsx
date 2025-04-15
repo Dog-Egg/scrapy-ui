@@ -25,8 +25,8 @@ dayjs.extend(utc);
 
 export default function Page() {
   const formSchema = z.object({
-    egg: z.instanceof(Blob, { message: "Egg File is required." }),
-    project: z.string({ required_error: "Project Name is required." }),
+    egg: z.instanceof(Blob, { message: "Egg 文件是必需的。" }),
+    project: z.string({ required_error: "项目名称是必需的。" }),
     version: z.string().default(() => dayjs.utc().format("YYYYMMDDHHmmss")),
   });
 
@@ -47,11 +47,11 @@ export default function Page() {
       addversion(currentNode?.url, body)
         .then(() => {
           toast({
-            title: "Upload successfully",
+            title: "上传成功",
             description: (
               <ul>
-                <li>Project: {values.project}</li>
-                <li>Version: {values.version}</li>
+                <li>项目: {values.project}</li>
+                <li>版本: {values.version}</li>
               </ul>
             ),
           });
@@ -75,7 +75,7 @@ export default function Page() {
             name="egg"
             render={({ field: { value, ...field } }) => (
               <FormItem>
-                <FormLabel required>Egg File</FormLabel>
+                <FormLabel required>Egg 文件</FormLabel>
                 <FormControl>
                   <Uploader
                     accept=".egg"
@@ -104,7 +104,7 @@ export default function Page() {
             name="project"
             render={({ field }) => (
               <FormItem>
-                <FormLabel required>Project Name</FormLabel>
+                <FormLabel required>项目名称</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -117,7 +117,7 @@ export default function Page() {
             name="version"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Version Name</FormLabel>
+                <FormLabel>版本名称</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -126,7 +126,7 @@ export default function Page() {
             )}
           />
           <Button type="submit" loading={submitLoading}>
-            Upload
+            上传
           </Button>
         </form>
       </Form>

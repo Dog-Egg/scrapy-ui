@@ -14,9 +14,9 @@ export function ScheduleFormDialog() {
   const title = useMemo(() => {
     switch (type) {
       case "copying":
-        return "Copy Job";
+        return "复制任务";
       case "creation":
-        return "Create Job";
+        return "创建任务";
     }
   }, [type]);
 

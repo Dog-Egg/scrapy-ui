@@ -103,39 +103,42 @@ export default function JobTable() {
       // },
       {
         accessorKey: "project",
-        header: "Project",
+        header: "项目",
         cell({ row }) {
           return getHighlightedText(row.original.project, searchValue);
         },
       },
       {
         accessorKey: "spider",
-        header: "Spider",
+        header: "爬虫",
         cell({ row }) {
           return getHighlightedText(row.original.spider, searchValue);
         },
       },
       {
-        header: "Stage",
+        header: "状态",
         cell({ row }) {
           let Icon;
+          let titleText = "";
           switch (row.original.stage) {
             case "pending":
               Icon = StopwatchIcon;
+              titleText = "等待中";
               break;
             case "running":
               Icon = LapTimerIcon;
+              titleText = "运行中";
               break;
             case "finished":
               Icon = CheckCircledIcon;
+              titleText = "已完成";
               break;
           }
 
-          const title = row.original.stage;
           return (
             <span className="flex items-center">
               <Icon className="mr-2 h-4 w-4" />
-              {title.charAt(0).toUpperCase() + title.substr(1).toLowerCase()}
+              {titleText}
             </span>
           );
         },
@@ -149,13 +152,13 @@ export default function JobTable() {
             return dayjs.utc(row.original.start_time).local().calendar();
         },
         header: ({ column }) => {
-          return <SortHeader title="StartTime" column={column} />;
+          return <SortHeader title="开始时间" column={column} />;
         },
       },
       {
         accessorKey: "end_time",
         header: ({ column }) => {
-          return <SortHeader title="EndTime" column={column} />;
+          return <SortHeader title="结束时间" column={column} />;
         },
         cell({ row }) {
           if (row.original.stage === "finished")
@@ -165,14 +168,13 @@ export default function JobTable() {
       {
         id: "elapsed",
         header({ column }) {
-          return "Elapsed";
+          return "耗时";
         },
         cell({ row }) {
           const { stage } = row.original;
           if (stage === "pending") return;
           return (
             <Timer
-              // className="ml-5"
               startTime={row.original.start_time}
               endTime={stage === "finished" ? row.original.end_time : undefined}
             />
@@ -195,12 +197,12 @@ export default function JobTable() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">打开菜单</span>
                   <DotsHorizontalIcon className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>操作</DropdownMenuLabel>
                 {(row.original.stage == "pending" ||
                   row.original.stage == "running") && (
                   <>
@@ -211,15 +213,15 @@ export default function JobTable() {
                           cancel(currentNode?.url, project, id).then(
                             ({ prevstate }) => {
                               toast({
-                                title: "The job was successfully cancelled.",
-                                description: `prevstate: "${prevstate}"`,
+                                title: "任务已成功取消。",
+                                description: `先前状态: "${prevstate}"`,
                               });
                             },
                           );
                         }
                       }}
                     >
-                      Cancel Job
+                      取消任务
                     </DropdownMenuItem>
                   </>
                 )}
@@ -230,7 +232,7 @@ export default function JobTable() {
                         viewLog(currentNode?.url, log_url).then((content) =>
                           fileViewerDispath({
                             type: "open",
-                            title: "Log",
+                            title: "日志",
                             content,
                             showRefreshButton: stage === "running",
                             refreshFunction() {
@@ -245,7 +247,7 @@ export default function JobTable() {
                       }
                     }}
                   >
-                    View Log
+                    查看日志
                   </DropdownMenuItem>
                 )}
                 {items_url && (
@@ -256,7 +258,7 @@ export default function JobTable() {
                           (content) => {
                             fileViewerDispath({
                               type: "open",
-                              title: "Items",
+                              title: "结果项",
                               content,
                               showRefreshButton: stage === "running",
                               refreshFunction() {
@@ -272,7 +274,7 @@ export default function JobTable() {
                       }
                     }}
                   >
-                    View Items
+                    查看结果项
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem
@@ -284,14 +286,14 @@ export default function JobTable() {
                           setOpenDialog(true, "copying");
                         } else {
                           toast({
-                            title: "This job can't be copied.",
+                            title: "无法获取任务详情",
                             variant: "destructive",
                           });
                         }
                       });
                   }}
                 >
-                  Copy Job
+                  重新调度任务
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -394,7 +396,7 @@ export default function JobTable() {
             setOpenDialog(true, "creation");
           }}
         >
-          Create a Job
+          创建任务
         </Button>
       </div>
       <DataTable

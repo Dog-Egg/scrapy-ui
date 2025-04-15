@@ -14,10 +14,10 @@ export default function Page() {
         variant="destructive"
         onClick={() => {
           Message.confirm({
-            title: "Are you sure?",
-            description: `This will delete node "${
-              currentNode ? new URL(currentNode?.url).host : "unknown"
-            }".`,
+            title: "确定要删除吗？",
+            description: `此操作将删除节点 "${
+              currentNode ? new URL(currentNode?.url).host : "未知"
+            }"。`,
           }).then(() => {
             if (currentNode) {
               deleteNodeByUrl(currentNode?.url).then(() => {
@@ -27,7 +27,7 @@ export default function Page() {
           });
         }}
       >
-        Delete Node
+        删除节点
       </Button>
     </div>
   );
